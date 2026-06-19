@@ -1,5 +1,5 @@
 # ANALISIS DISTRIBUSI SPPG PROGRAM MBG terhadap Indeks Ketahanan & Kerentanan Pangan (IKP/FSVA)
-# ── 0. PACKAGES ───────────────────────────────────────────────────────────────
+# 0. PACKAGES 
 pkgs <- c("readxl", "tidyverse", "dunn.test", "AER",
           "quantreg", "stargazer", "broom", "scales",
           "ggplot2", "patchwork")
@@ -12,10 +12,7 @@ invisible(lapply(pkgs, library, character.only = TRUE))
 
 cat("Semua package berhasil dimuat.\n")
 
-
-# =============================================================================
 # STEP 1: LOAD DATA DAN PERSIAPAN
-# =============================================================================
 
 df_raw <- read_excel("data/sppg_ikp.xlsx")
 
@@ -70,9 +67,7 @@ glimpse(df)
 summary(df[, c("sppg_per100k", "ikp", "pct_miskin", "pct_stunting")])
 
 
-# =============================================================================
 # STEP 2: STATISTIK DESKRIPTIF
-# =============================================================================
 
 cat("\n===== STEP 2: STATISTIK DESKRIPTIF =====\n")
 
@@ -97,10 +92,7 @@ df |>
   arrange(ikp) |>
   print(n = Inf)
 
-
-# =============================================================================
 # STEP 3: UJI PERBEDAAN ANTAR KELOMPOK
-# =============================================================================
 
 cat("\n===== STEP 3: UJI KRUSKAL-WALLIS & DUNN =====\n")
 
@@ -128,9 +120,7 @@ cat("\nMann-Whitney Rawan vs Tahan (Full):\n"); print(mw_full)
 cat("\nMann-Whitney Rawan vs Tahan (Tanpa Papua):\n"); print(mw_nop)
 
 
-# =============================================================================
 # STEP 4: CONCENTRATION INDEX
-# =============================================================================
 
 cat("\n===== STEP 4: CONCENTRATION INDEX =====\n")
 
@@ -172,9 +162,7 @@ print(ci_results)
 cat("\nInterpretasi: CI < 0 = pro-rawan/pro-poor | CI > 0 = pro-tahan/pro-rich\n")
 
 
-# =============================================================================
 # STEP 5: REGRESI OLS DAN TOBIT
-# =============================================================================
 
 cat("\n===== STEP 5: REGRESI OLS & TOBIT =====\n")
 
@@ -206,9 +194,7 @@ stargazer(ols_full, ols_nop, tobit_full, tobit_nop,
           star.cutoffs   = c(0.1, 0.05, 0.01))
 
 
-# =============================================================================
 # STEP 6: QUANTILE REGRESSION
-# =============================================================================
 
 cat("\n===== STEP 6: QUANTILE REGRESSION =====\n")
 
@@ -269,9 +255,7 @@ df_coef_all <- bind_rows(df_coef_full, df_coef_nop) |>
   filter(term != "(Intercept)")
 
 
-# =============================================================================
 # STEP 7: VISUALISASI
-# =============================================================================
 
 cat("\n===== STEP 7: VISUALISASI =====\n")
 
@@ -393,9 +377,7 @@ ggsave("output/fig5_quantile_coef.png", p5, width = 12, height = 6, dpi = 150)
 cat("\nSemua visualisasi tersimpan di folder output/\n")
 
 
-# =============================================================================
 # STEP 8: EKSPOR DATA UNTUK DASHBOARD
-# =============================================================================
 
 cat("\n===== STEP 8: EKSPOR DATA DASHBOARD =====\n")
 
@@ -450,9 +432,9 @@ write_json(df_coef_all,   "docs/data/quantile_coef.json",  pretty = TRUE)
 
 cat("Data dashboard berhasil diekspor ke docs/data/\n")
 
-# =============================================================================
+
 # SELESAI
-# =============================================================================
+
 cat("\n============================================================\n")
 cat("Analisis selesai. Output:\n")
 cat("  - Tabel: dicetak di console\n")
