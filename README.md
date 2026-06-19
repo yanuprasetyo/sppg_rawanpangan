@@ -1,13 +1,4 @@
-# =============================================================================
-# ANALISIS KETEPATSASARAN DISTRIBUSI SPPG PROGRAM MBG
-# Berdasarkan Indeks Ketahanan & Kerentanan Pangan (IKP/FSVA)
-# -----------------------------------------------------------------------------
-# Penulis : Yanu Endar Prasetyo et al.
-# Institusi: Pusat Riset Kependudukan, BRIN
-# Tahun   : 2026
-# Repo    : https://github.com/yanuprasetyo/sppg_rawanpangan
-# =============================================================================
-
+# ANALISIS DISTRIBUSI SPPG PROGRAM MBG terhadap Indeks Ketahanan & Kerentanan Pangan (IKP/FSVA)
 # ── 0. PACKAGES ───────────────────────────────────────────────────────────────
 pkgs <- c("readxl", "tidyverse", "dunn.test", "AER",
           "quantreg", "stargazer", "broom", "scales",
