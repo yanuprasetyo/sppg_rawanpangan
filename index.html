@@ -3,339 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dapur untuk Siapa? — Distribusi SPPG & Kerawanan Pangan</title>
+<title>Dapur untuk Siapa? — Distribusi SPPG &amp; Kerawanan Pangan</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #f4f6f9;
-    color: #2c3e50;
-    line-height: 1.6;
-  }
-
-  /* HEADER */
-  header {
-    background: linear-gradient(135deg, #1a3a5c 0%, #2c6e9e 100%);
-    color: white;
-    padding: 2rem 2rem 1.5rem;
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  .badge {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.4);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  header h1 {
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 700;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-  header h1 span { color: #f39c12; }
-  header p.sub {
-    font-size: 0.9rem;
-    opacity: 0.85;
-    margin-bottom: 0.25rem;
-  }
-  header p.meta {
-    font-size: 0.8rem;
-    opacity: 0.65;
-  }
-
-  /* ALERT BOX */
-  .alert {
-    background: #fff3cd;
-    border-left: 4px solid #f39c12;
-    padding: 0.9rem 1.2rem;
-    margin: 1.5rem 2rem;
-    border-radius: 4px;
-    font-size: 0.88rem;
-  }
-  .alert strong { color: #856404; }
-
-  /* STAT CARDS */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 0 2rem 1rem;
-  }
-  .card {
-    background: white;
-    border-radius: 8px;
-    padding: 1.2rem 1.4rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    border-top: 3px solid #2c6e9e;
-  }
-  .card.red   { border-top-color: #e74c3c; }
-  .card.green { border-top-color: #27ae60; }
-  .card.orange{ border-top-color: #f39c12; }
-  .card.grey  { border-top-color: #7f8c8d; }
-  .card-value {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.1;
-    color: #1a3a5c;
-  }
-  .card-value.red   { color: #c0392b; }
-  .card-value.green { color: #1e8449; }
-  .card-value.orange{ color: #d35400; }
-  .card-label {
-    font-size: 0.8rem;
-    color: #7f8c8d;
-    margin-top: 0.3rem;
-  }
-  .card-sub {
-    font-size: 0.75rem;
-    color: #95a5a6;
-    margin-top: 0.2rem;
-    font-style: italic;
-  }
-
-  /* MAIN LAYOUT */
-  main {
-    padding: 0 2rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.2rem;
-  }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
-
-  .panel {
-    background: white;
-    border-radius: 8px;
-    padding: 1.4rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  }
-  .panel.full { grid-column: 1 / -1; }
-
-  .panel-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1a3a5c;
-    margin-bottom: 0.3rem;
-  }
-  .panel-sub {
-    font-size: 0.78rem;
-    color: #7f8c8d;
-    margin-bottom: 1rem;
-  }
-
-  /* FILTER */
-  .filters {
-    display: flex;
-    gap: 0.8rem;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 0.8rem 2rem;
-    background: white;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 1rem;
-  }
-  .filters label { font-size: 0.82rem; font-weight: 600; color: #555; }
-  .filters select {
-    font-size: 0.82rem;
-    padding: 0.3rem 0.6rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #fafafa;
-  }
-  .btn-reset {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.8rem;
-    background: #1a3a5c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .btn-reset:hover { background: #2c6e9e; }
-
-  /* TABLE */
-  .tbl-wrap { overflow-x: auto; max-height: 380px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  thead th {
-    background: #1a3a5c;
-    color: white;
-    padding: 0.55rem 0.8rem;
-    text-align: left;
-    position: sticky;
-    top: 0;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  tbody tr:nth-child(even) { background: #f8f9fa; }
-  tbody tr:hover { background: #e8f4fd; }
-  tbody td {
-    padding: 0.45rem 0.8rem;
-    border-bottom: 1px solid #eee;
-    white-space: nowrap;
-  }
-  .tag {
-    display: inline-block;
-    padding: 0.1rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
-  }
-  .tag-1 { background:#fde8e8; color:#c0392b; }
-  .tag-2 { background:#fde8e8; color:#c0392b; }
-  .tag-3 { background:#fef9e7; color:#d35400; }
-  .tag-4 { background:#eafaf1; color:#1e8449; }
-  .tag-5 { background:#eafaf1; color:#1e8449; }
-  .tag-6 { background:#d5f5e3; color:#145a32; }
-  .tag-0sppg { background:#f8d7da; color:#721c24; }
-
-  /* CI TABLE */
-  .ci-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .ci-table th {
-    background: #f4f6f9;
-    padding: 0.6rem 1rem;
-    text-align: left;
-    font-size: 0.8rem;
-    color: #555;
-    border-bottom: 2px solid #ddd;
-  }
-  .ci-table td {
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid #eee;
-  }
-  .ci-pos { color: #c0392b; font-weight: 700; }
-  .ci-neg { color: #1e8449; font-weight: 700; }
-
-  /* REGRESSION TABLE */
-  .reg-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-  .reg-table th {
-    background: #1a3a5c;
-    color: white;
-    padding: 0.5rem 0.7rem;
-    text-align: center;
-    font-size: 0.76rem;
-  }
-  .reg-table th:first-child { text-align: left; }
-  .reg-table td {
-    padding: 0.45rem 0.7rem;
-    border-bottom: 1px solid #eee;
-    text-align: center;
-  }
-  .reg-table td:first-child { text-align: left; font-weight: 500; }
-  .reg-table tr:nth-child(even) { background: #f8f9fa; }
-  .sig-3 { color: #c0392b; font-weight: 700; }
-  .sig-2 { color: #d35400; font-weight: 600; }
-  .sig-1 { color: #7d6608; }
-  .wrong { background: #fde8e8 !important; }
-  .right { background: #eafaf1 !important; }
-
-  /* FINDINGS */
-  .findings { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-  @media (max-width: 700px) { .findings { grid-template-columns: 1fr; } }
-  .finding-item {
-    background: #f8f9fa;
-    border-left: 3px solid #2c6e9e;
-    padding: 0.8rem 1rem;
-    border-radius: 0 4px 4px 0;
-    font-size: 0.83rem;
-  }
-  .finding-item.bad  { border-left-color: #e74c3c; background: #fdf2f2; }
-  .finding-item.good { border-left-color: #27ae60; background: #f2fdf5; }
-  .finding-item strong { display: block; margin-bottom: 0.3rem; font-size: 0.85rem; }
-
-  /* METHODOLOGY */
-  .method-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0.7rem;
-  }
-  .method-item {
-    background: #f8f9fa;
-    padding: 0.8rem;
-    border-radius: 6px;
-    font-size: 0.78rem;
-    border-top: 2px solid #2c6e9e;
-  }
-  .method-item strong { display: block; font-size: 0.82rem; margin-bottom: 0.3rem; color: #1a3a5c; }
-
-  /* FOOTER */
-  footer {
-    background: #1a3a5c;
-    color: rgba(255,255,255,0.7);
-    text-align: center;
-    padding: 1.5rem 2rem;
-    font-size: 0.78rem;
-    margin-top: 1rem;
-  }
-  footer a { color: #aed6f1; text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  canvas { max-height: 320px; }
-  .loading { text-align:center; color:#999; padding:2rem; font-size:0.85rem; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4f6f9;color:#2c3e50;line-height:1.6;}
+header{background:linear-gradient(135deg,#1a3a5c 0%,#2c6e9e 100%);color:white;padding:2rem 2rem 1.5rem;}
+.header-top{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+.badge{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);padding:.25rem .75rem;border-radius:20px;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;}
+header h1{font-size:clamp(1.4rem,3vw,2rem);font-weight:700;line-height:1.3;margin-bottom:.5rem;}
+header h1 span{color:#f39c12;}
+header p.sub{font-size:.9rem;opacity:.85;margin-bottom:.25rem;}
+header p.meta{font-size:.8rem;opacity:.65;}
+.alert{background:#fff3cd;border-left:4px solid #f39c12;padding:.9rem 1.2rem;margin:1.5rem 2rem;border-radius:4px;font-size:.88rem;}
+.alert strong{color:#856404;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:0 2rem 1rem;}
+.card{background:white;border-radius:8px;padding:1.2rem 1.4rem;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:3px solid #2c6e9e;}
+.card.red{border-top-color:#e74c3c;}.card.green{border-top-color:#27ae60;}.card.orange{border-top-color:#f39c12;}.card.grey{border-top-color:#7f8c8d;}
+.card-value{font-size:2rem;font-weight:700;line-height:1.1;color:#1a3a5c;}
+.card-value.red{color:#c0392b;}.card-value.green{color:#1e8449;}.card-value.orange{color:#d35400;}
+.card-label{font-size:.8rem;color:#7f8c8d;margin-top:.3rem;}
+.card-sub{font-size:.75rem;color:#95a5a6;margin-top:.2rem;font-style:italic;}
+main{padding:0 2rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+@media(max-width:900px){main{grid-template-columns:1fr;}}
+.panel{background:white;border-radius:8px;padding:1.4rem;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.panel.full{grid-column:1/-1;}
+.panel-title{font-size:.95rem;font-weight:700;color:#1a3a5c;margin-bottom:.3rem;}
+.panel-sub{font-size:.78rem;color:#7f8c8d;margin-bottom:1rem;}
+.filters{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;padding:.8rem 2rem;background:white;border-bottom:1px solid #eee;margin-bottom:1rem;}
+.filters label{font-size:.82rem;font-weight:600;color:#555;}
+.filters select{font-size:.82rem;padding:.3rem .6rem;border:1px solid #ddd;border-radius:4px;background:#fafafa;}
+.btn-reset{font-size:.8rem;padding:.3rem .8rem;background:#1a3a5c;color:white;border:none;border-radius:4px;cursor:pointer;}
+.btn-reset:hover{background:#2c6e9e;}
+.tbl-wrap{overflow-x:auto;max-height:400px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+thead th{background:#1a3a5c;color:white;padding:.55rem .8rem;text-align:left;position:sticky;top:0;font-weight:600;white-space:nowrap;}
+tbody tr:nth-child(even){background:#f8f9fa;}
+tbody tr:hover{background:#e8f4fd;}
+tbody td{padding:.45rem .8rem;border-bottom:1px solid #eee;white-space:nowrap;}
+.tag{display:inline-block;padding:.1rem .5rem;border-radius:10px;font-size:.72rem;font-weight:600;}
+.tag-1{background:#fde8e8;color:#c0392b;}.tag-2{background:#fde8e8;color:#c0392b;}.tag-3{background:#fef9e7;color:#d35400;}
+.tag-4{background:#eafaf1;color:#1e8449;}.tag-5{background:#eafaf1;color:#1e8449;}.tag-6{background:#d5f5e3;color:#145a32;}
+.tag-0sppg{background:#f8d7da;color:#721c24;}
+.ci-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.ci-table th{background:#f4f6f9;padding:.6rem 1rem;text-align:left;font-size:.8rem;color:#555;border-bottom:2px solid #ddd;}
+.ci-table td{padding:.6rem 1rem;border-bottom:1px solid #eee;}
+.ci-pos{color:#c0392b;font-weight:700;}.ci-neg{color:#1e8449;font-weight:700;}
+.reg-table{width:100%;border-collapse:collapse;font-size:.78rem;}
+.reg-table th{background:#1a3a5c;color:white;padding:.5rem .7rem;text-align:center;font-size:.76rem;}
+.reg-table th:first-child{text-align:left;}
+.reg-table td{padding:.45rem .7rem;border-bottom:1px solid #eee;text-align:center;}
+.reg-table td:first-child{text-align:left;font-weight:500;}
+.reg-table tr:nth-child(even){background:#f8f9fa;}
+.sig-3{color:#c0392b;font-weight:700;}.sig-2{color:#d35400;font-weight:600;}.sig-1{color:#7d6608;}
+.wrong{background:#fde8e8!important;}.right{background:#eafaf1!important;}
+.findings{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+@media(max-width:700px){.findings{grid-template-columns:1fr;}}
+.finding-item{background:#f8f9fa;border-left:3px solid #2c6e9e;padding:.8rem 1rem;border-radius:0 4px 4px 0;font-size:.83rem;}
+.finding-item.bad{border-left-color:#e74c3c;background:#fdf2f2;}
+.finding-item.good{border-left-color:#27ae60;background:#f2fdf5;}
+.finding-item strong{display:block;margin-bottom:.3rem;font-size:.85rem;}
+.method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.7rem;}
+.method-item{background:#f8f9fa;padding:.8rem;border-radius:6px;font-size:.78rem;border-top:2px solid #2c6e9e;}
+.method-item strong{display:block;font-size:.82rem;margin-bottom:.3rem;color:#1a3a5c;}
+footer{background:#1a3a5c;color:rgba(255,255,255,.7);text-align:center;padding:1.5rem 2rem;font-size:.78rem;margin-top:1rem;}
+footer a{color:#aed6f1;text-decoration:none;}footer a:hover{text-decoration:underline;}
+canvas{max-height:320px;}
+.loading{text-align:center;color:#999;padding:2rem;font-size:.85rem;}
+.data-badge{display:inline-block;background:#1e8449;color:white;font-size:.7rem;padding:.15rem .5rem;border-radius:3px;margin-left:.5rem;font-weight:600;}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <header>
   <div class="header-top">
     <span class="badge">Policy Dashboard</span>
     <span class="badge">514 Kabupaten/Kota</span>
-    <span class="badge">Data: April 2026</span>
+    <span class="badge">Data: 1 Mei 2026</span>
+    <span class="badge" style="background:rgba(46,204,113,.3);border-color:rgba(46,204,113,.6);">✓ Data Terverifikasi Raw BGN</span>
   </div>
   <h1>Dapur untuk Siapa? <span>Distribusi SPPG</span> dan Kerawanan Pangan di Indonesia</h1>
   <p class="sub">Analisis Ketepatsasaran Program Makan Bergizi Gratis (MBG) berbasis IKP/FSVA Bapanas</p>
-  <p class="meta">Prasetyo, Y.E., Aini, Y.N., Bahagijo, S., & Rossinda, S. (2026)</p>
+  <p class="meta">Prasetyo, Y.E., Aini, Y.N., Bahagijo, S., &amp; Rossinda, S. (2026) — Data terverifikasi dari raw BGN 27.427 SPPG</p>
 </header>
-
-<!-- ALERT -->
 <div class="alert">
   <strong>Temuan Kritis:</strong> Wilayah paling rawan pangan (IKP kategori 1) rata-rata hanya mendapat <strong>1,13 SPPG per 100.000 penduduk</strong> — hampir 8 kali lebih sedikit dibanding wilayah sangat tahan pangan. Distribusi SPPG bersifat <strong>pro-tahan pangan</strong>, bukan pro-rawan pangan. Paradoks stunting terkonfirmasi secara statistik di semua model.
 </div>
-
-<!-- STAT CARDS -->
 <div class="cards">
-  <div class="card">
-    <div class="card-value">27.427</div>
-    <div class="card-label">Total Dapur SPPG Nasional</div>
-    <div class="card-sub">Per 30 April 2026</div>
-  </div>
-  <div class="card">
-    <div class="card-value">514</div>
-    <div class="card-label">Kabupaten/Kota Dianalisis</div>
-    <div class="card-sub">dari 38 provinsi</div>
-  </div>
-  <div class="card red">
-    <div class="card-value red">16</div>
-    <div class="card-label">Kabupaten dengan 0 SPPG</div>
-    <div class="card-sub">14 di antaranya di Papua</div>
-  </div>
-  <div class="card red">
-    <div class="card-value red">1,13</div>
-    <div class="card-label">SPPG/100k — Sangat Rentan</div>
-    <div class="card-sub">vs 9,00 di Sangat Tahan</div>
-  </div>
-  <div class="card orange">
-    <div class="card-value orange">+0,077</div>
-    <div class="card-label">Concentration Index (IKP)</div>
-    <div class="card-sub">Positif = pro-tahan pangan</div>
-  </div>
-  <div class="card red">
-    <div class="card-value red">61</div>
-    <div class="card-label">Kabupaten "Krisis Ganda"</div>
-    <div class="card-sub">Hanya terima 1,3% SPPG nasional</div>
-  </div>
+  <div class="card"><div class="card-value">27.427</div><div class="card-label">Total Dapur SPPG Nasional</div><div class="card-sub">Per 1 Mei 2026 · Terverifikasi BGN</div></div>
+  <div class="card"><div class="card-value">514</div><div class="card-label">Kabupaten/Kota Dianalisis</div><div class="card-sub">dari 38 provinsi</div></div>
+  <div class="card red"><div class="card-value red">16</div><div class="card-label">Kabupaten dengan 0 SPPG</div><div class="card-sub">14 di antaranya di Papua</div></div>
+  <div class="card red"><div class="card-value red">1,13</div><div class="card-label">SPPG/100k — Sangat Rentan</div><div class="card-sub">vs 9,00 di Sangat Tahan</div></div>
+  <div class="card orange"><div class="card-value orange">+0,077</div><div class="card-label">Concentration Index (IKP)</div><div class="card-sub">Positif = pro-tahan pangan</div></div>
+  <div class="card red"><div class="card-value red">61</div><div class="card-label">Kabupaten "Krisis Ganda"</div><div class="card-sub">Hanya terima 1,3% SPPG nasional</div></div>
 </div>
-
-<!-- FILTERS -->
 <div class="filters">
   <label>Filter IKP:</label>
   <select id="filter-ikp" onchange="applyFilters()">
@@ -354,580 +114,675 @@
     <option value="papua">Papua Saja</option>
   </select>
   <button class="btn-reset" onclick="resetFilters()">Reset</button>
-  <span id="filter-count" style="font-size:0.8rem;color:#777;"></span>
+  <span id="filter-count" style="font-size:.8rem;color:#777;"></span>
+  <button class="btn-reset" style="margin-left:auto;background:#1e8449;" onclick="dlCSV()">⬇ Unduh CSV</button>
 </div>
-
-<!-- MAIN GRID -->
 <main>
-
-  <!-- CHART 1: Bar chart rata-rata SPPG per kategori IKP -->
-  <div class="panel">
-    <div class="panel-title">Rata-rata SPPG per 100.000 Penduduk menurut Kategori IKP</div>
-    <div class="panel-sub">Gradien terbalik: semakin rawan, semakin sedikit SPPG yang diterima</div>
-    <canvas id="chart-bar-ikp"></canvas>
-  </div>
-
-  <!-- CHART 2: Scatter IKP vs SPPG -->
-  <div class="panel">
-    <div class="panel-title">Hubungan IKP dengan Cakupan SPPG per Kapita</div>
-    <div class="panel-sub">Tren positif = wilayah tahan pangan mendapat lebih banyak SPPG</div>
-    <canvas id="chart-scatter"></canvas>
-  </div>
-
-  <!-- CI TABLE -->
+  <div class="panel"><div class="panel-title">Rata-rata SPPG per 100.000 Penduduk menurut Kategori IKP</div><div class="panel-sub">Gradien terbalik: semakin rawan, semakin sedikit SPPG yang diterima</div><canvas id="chart-bar-ikp"></canvas></div>
+  <div class="panel"><div class="panel-title">Hubungan IKP dengan Cakupan SPPG per Kapita</div><div class="panel-sub">Tren positif = wilayah tahan pangan mendapat lebih banyak SPPG · 514 kab/kota penuh</div><canvas id="chart-scatter"></canvas></div>
   <div class="panel">
     <div class="panel-title">Concentration Index (CI) Distribusi SPPG</div>
     <div class="panel-sub">CI &lt; 0 = pro-rawan (diinginkan) | CI &gt; 0 = pro-tahan (tidak diinginkan)</div>
-    <table class="ci-table">
-      <thead>
-        <tr>
-          <th>Basis Ranking</th>
-          <th>CI Full Sample</th>
-          <th>CI Tanpa Papua</th>
-          <th>Interpretasi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Kemiskinan (%)</td>
-          <td><span class="ci-neg">−0,042</span></td>
-          <td><span style="color:#888">+0,004</span></td>
-          <td style="font-size:0.75rem">Kesan pro-poor hilang tanpa Papua</td>
-        </tr>
-        <tr>
-          <td>IKP (ketahanan pangan)</td>
-          <td><span class="ci-pos">+0,077</span></td>
-          <td><span class="ci-pos">+0,034</span></td>
-          <td style="font-size:0.75rem">Pro-tahan pangan di kedua sampel</td>
-        </tr>
-      </tbody>
-    </table>
-    <div style="margin-top:1rem;">
-      <canvas id="chart-ci" style="max-height:180px;"></canvas>
-    </div>
+    <table class="ci-table"><thead><tr><th>Basis Ranking</th><th>CI Full Sample</th><th>CI Tanpa Papua</th><th>Interpretasi</th></tr></thead>
+    <tbody>
+      <tr><td>Kemiskinan (%)</td><td><span class="ci-neg">−0,042</span></td><td><span style="color:#888">+0,004</span></td><td style="font-size:.75rem">Kesan pro-poor hilang tanpa Papua</td></tr>
+      <tr><td>IKP (ketahanan pangan)</td><td><span class="ci-pos">+0,077</span></td><td><span class="ci-pos">+0,034</span></td><td style="font-size:.75rem">Pro-tahan pangan di kedua sampel</td></tr>
+    </tbody></table>
+    <div style="margin-top:1rem;"><canvas id="chart-ci" style="max-height:180px;"></canvas></div>
   </div>
-
-  <!-- REGRESSION TABLE -->
   <div class="panel">
     <div class="panel-title">Hasil Regresi OLS dan Tobit</div>
     <div class="panel-sub">Variabel dependen: SPPG per 100.000 penduduk</div>
-    <div class="tbl-wrap">
-      <table class="reg-table">
-        <thead>
-          <tr>
-            <th>Variabel</th>
-            <th>OLS Full</th>
-            <th>OLS −Papua</th>
-            <th>Tobit Full</th>
-            <th>Tobit −Papua</th>
-            <th>Arah Harapan</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="wrong">
-            <td>Kemiskinan (%)</td>
-            <td>−0,025</td>
-            <td>+0,026</td>
-            <td>−0,038</td>
-            <td>+0,026</td>
-            <td style="color:#1e8449;font-weight:700">+ harap</td>
-          </tr>
-          <tr class="wrong">
-            <td>Stunting (%)</td>
-            <td class="sig-2">−0,053**</td>
-            <td class="sig-2">−0,058**</td>
-            <td class="sig-2">−0,055**</td>
-            <td class="sig-2">−0,058**</td>
-            <td style="color:#1e8449;font-weight:700">+ harap</td>
-          </tr>
-          <tr class="wrong">
-            <td>IKP</td>
-            <td class="sig-3">+0,102***</td>
-            <td class="sig-1">+0,057*</td>
-            <td class="sig-3">+0,118***</td>
-            <td class="sig-1">+0,057*</td>
-            <td style="color:#1e8449;font-weight:700">− harap</td>
-          </tr>
-          <tr>
-            <td>log(Populasi)</td>
-            <td class="sig-2">+0,409**</td>
-            <td class="sig-2">+0,473**</td>
-            <td class="sig-2">+0,404**</td>
-            <td class="sig-2">+0,486**</td>
-            <td style="color:#888">netral</td>
-          </tr>
-          <tr style="background:#f0f4f8;font-weight:600;font-size:0.75rem;">
-            <td>n / R²</td>
-            <td>514 / 0,160</td>
-            <td>472 / 0,050</td>
-            <td>514</td>
-            <td>472</td>
-            <td>—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="font-size:0.72rem;color:#999;margin-top:0.5rem;">* p&lt;0,1; ** p&lt;0,05; *** p&lt;0,01. Baris merah = arah koefisien berlawanan dari harapan.</p>
+    <div class="tbl-wrap"><table class="reg-table">
+      <thead><tr><th>Variabel</th><th>OLS Full</th><th>OLS −Papua</th><th>Tobit Full</th><th>Tobit −Papua</th><th>Arah Harapan</th></tr></thead>
+      <tbody>
+        <tr class="wrong"><td>Kemiskinan (%)</td><td>−0,025</td><td>+0,026</td><td>−0,038</td><td>+0,026</td><td style="color:#1e8449;font-weight:700">+ harap</td></tr>
+        <tr class="wrong"><td>Stunting (%)</td><td class="sig-2">−0,053**</td><td class="sig-2">−0,058**</td><td class="sig-2">−0,055**</td><td class="sig-2">−0,058**</td><td style="color:#1e8449;font-weight:700">+ harap</td></tr>
+        <tr class="wrong"><td>IKP</td><td class="sig-3">+0,102***</td><td class="sig-1">+0,057*</td><td class="sig-3">+0,118***</td><td class="sig-1">+0,057*</td><td style="color:#1e8449;font-weight:700">− harap</td></tr>
+        <tr><td>log(Populasi)</td><td class="sig-2">+0,409**</td><td class="sig-2">+0,473**</td><td class="sig-2">+0,404**</td><td class="sig-2">+0,486**</td><td style="color:#888">netral</td></tr>
+        <tr style="background:#f0f4f8;font-weight:600;font-size:.75rem;"><td>n / R²</td><td>514 / 0,160</td><td>472 / 0,050</td><td>514</td><td>472</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:.72rem;color:#999;margin-top:.5rem;">* p&lt;0,1; ** p&lt;0,05; *** p&lt;0,01. Baris merah = arah koefisien berlawanan harapan.</p>
   </div>
-
-  <!-- QR CHART -->
   <div class="panel full">
     <div class="panel-title">Quantile Regression: Koefisien IKP dan Stunting Lintas Distribusi</div>
-    <div class="panel-sub">Mismatch terjadi konsisten di seluruh spektrum distribusi SPPG — bukan hanya di rata-rata</div>
+    <div class="panel-sub">Mismatch terjadi konsisten di seluruh spektrum distribusi SPPG</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-      <div>
-        <p style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;text-align:center;">Koefisien IKP per Kuantil</p>
-        <canvas id="chart-qr-ikp"></canvas>
-      </div>
-      <div>
-        <p style="font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;text-align:center;">Koefisien Stunting per Kuantil</p>
-        <canvas id="chart-qr-stunting"></canvas>
-      </div>
+      <div><p style="font-size:.8rem;font-weight:600;margin-bottom:.5rem;text-align:center;">Koefisien IKP per Kuantil</p><canvas id="chart-qr-ikp"></canvas></div>
+      <div><p style="font-size:.8rem;font-weight:600;margin-bottom:.5rem;text-align:center;">Koefisien Stunting per Kuantil</p><canvas id="chart-qr-stunting"></canvas></div>
     </div>
-    <p style="font-size:0.72rem;color:#999;margin-top:0.8rem;text-align:center;">Full Sample (merah) vs Tanpa Papua (biru). SE bootstrap R=1000. Garis putus = tidak ada efek (0).</p>
+    <p style="font-size:.72rem;color:#999;margin-top:.8rem;text-align:center;">Full Sample (merah) vs Tanpa Papua (biru). SE bootstrap R=1000.</p>
   </div>
-
-  <!-- TABLE KABKOTA -->
   <div class="panel full">
-    <div class="panel-title">Data Kabupaten/Kota</div>
-    <div class="panel-sub" id="table-subtitle">Menampilkan semua 514 kabupaten/kota — gunakan filter di atas untuk mempersempit</div>
-    <div class="tbl-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Provinsi</th>
-            <th>Kabupaten/Kota</th>
-            <th>IKP</th>
-            <th>Kategori IKP</th>
-            <th>SPPG/100k</th>
-            <th>Miskin (%)</th>
-            <th>Stunting (%)</th>
-            <th>Jumlah SPPG</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          <tr><td colspan="9" class="loading">Memuat data...</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="panel-title">Data Kabupaten/Kota <span class="data-badge">514 kab/kota · Raw BGN Terverifikasi</span></div>
+    <div class="panel-sub" id="table-subtitle">Menampilkan semua 514 kabupaten/kota — semua nilai SPPG sama persis dengan data BGN</div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Provinsi</th><th>Kabupaten/Kota</th><th>IKP</th><th>Kategori IKP</th><th>SPPG/100k</th><th>Miskin (%)</th><th>Stunting (%)</th><th>Jumlah SPPG</th><th>Status</th></tr></thead>
+      <tbody id="table-body"><tr><td colspan="9" class="loading">Memuat data...</td></tr></tbody>
+    </table></div>
   </div>
-
-  <!-- KEY FINDINGS -->
   <div class="panel full">
     <div class="panel-title">Ringkasan Temuan dan Implikasi Kebijakan</div>
     <div class="panel-sub">Semua temuan bertahan setelah robustness check (tanpa Papua)</div>
-    <div class="findings" style="margin-top:0.8rem;">
-      <div class="finding-item bad">
-        <strong>Gradien Terbalik (1:8)</strong>
-        Wilayah Sangat Rentan mendapat rata-rata 1,13 SPPG/100k vs 9,00 di Sangat Tahan. Kruskal-Wallis χ²=87,82, p&lt;0,0001.
-      </div>
-      <div class="finding-item bad">
-        <strong>Paradoks Stunting</strong>
-        Koefisien stunting negatif dan signifikan di semua model (−0,053 s.d. −0,058**). Wilayah stunting tinggi justru mendapat lebih sedikit SPPG.
-      </div>
-      <div class="finding-item bad">
-        <strong>Pro-Tahan Pangan</strong>
-        CI berbasis IKP = +0,077 (full) dan +0,034 (tanpa Papua). Distribusi SPPG tidak berpihak pada wilayah rawan pangan.
-      </div>
-      <div class="finding-item bad">
-        <strong>61 Kabupaten Krisis Ganda</strong>
-        Hanya menerima 1,3% SPPG nasional. Mayoritas di Papua, Maluku, NTT, dan kepulauan terpencil.
-      </div>
-      <div class="finding-item">
-        <strong>Bukan Hanya Masalah Papua</strong>
-        Semua temuan bertahan setelah Papua dibuang. Mismatch adalah pola sistemik nasional, bukan anomali regional.
-      </div>
-      <div class="finding-item">
-        <strong>R² Anjlok Tanpa Papua</strong>
-        R² turun dari 0,160 ke 0,050. Di luar Papua, faktor kebutuhan hampir tidak menjelaskan penempatan SPPG.
-      </div>
-      <div class="finding-item good">
-        <strong>Rekomendasi: Reformulasi Berbasis IKP</strong>
-        Integrasi IKP/FSVA Bapanas sebagai variabel wajib dalam formula penentuan lokasi SPPG, dengan target CI IKP negatif.
-      </div>
-      <div class="finding-item good">
-        <strong>Rekomendasi: Afirmasi 61 Kabupaten</strong>
-        Penetapan wilayah krisis ganda sebagai prioritas nasional ekspansi dapur, dengan model 3T untuk Papua.
-      </div>
+    <div class="findings" style="margin-top:.8rem;">
+      <div class="finding-item bad"><strong>Gradien Terbalik (1:8)</strong>Wilayah Sangat Rentan mendapat rata-rata 1,13 SPPG/100k vs 9,00 di Sangat Tahan. Kruskal-Wallis χ²=87,82, p&lt;0,0001.</div>
+      <div class="finding-item bad"><strong>Paradoks Stunting</strong>Koefisien stunting negatif dan signifikan di semua model (−0,053 s.d. −0,058**). Wilayah stunting tinggi justru mendapat lebih sedikit SPPG.</div>
+      <div class="finding-item bad"><strong>Pro-Tahan Pangan</strong>CI berbasis IKP = +0,077 (full) dan +0,034 (tanpa Papua). Distribusi SPPG tidak berpihak pada wilayah rawan pangan.</div>
+      <div class="finding-item bad"><strong>61 Kabupaten Krisis Ganda</strong>Hanya menerima 1,3% SPPG nasional. Mayoritas di Papua, Maluku, NTT, dan kepulauan terpencil.</div>
+      <div class="finding-item"><strong>Bukan Hanya Masalah Papua</strong>Semua temuan bertahan setelah Papua dibuang. Mismatch adalah pola sistemik nasional.</div>
+      <div class="finding-item"><strong>R² Anjlok Tanpa Papua</strong>R² turun dari 0,160 ke 0,050. Di luar Papua, faktor kebutuhan hampir tidak menjelaskan penempatan SPPG.</div>
+      <div class="finding-item good"><strong>Rekomendasi: Reformulasi Berbasis IKP</strong>Integrasi IKP/FSVA Bapanas sebagai variabel wajib dalam formula penentuan lokasi SPPG.</div>
+      <div class="finding-item good"><strong>Rekomendasi: Afirmasi 61 Kabupaten</strong>Penetapan wilayah krisis ganda sebagai prioritas nasional ekspansi dapur.</div>
     </div>
   </div>
-
-  <!-- METHODOLOGY -->
   <div class="panel full">
     <div class="panel-title">Metodologi</div>
     <div class="panel-sub">Pipeline analisis end-to-end menggunakan R 4.6.0</div>
-    <div class="method-grid" style="margin-top:0.8rem;">
-      <div class="method-item">
-        <strong>Statistik Deskriptif</strong>
-        Ringkasan distribusi SPPG per kapita berdasarkan 6 kategori IKP/FSVA
-      </div>
-      <div class="method-item">
-        <strong>Kruskal-Wallis + Dunn</strong>
-        Uji signifikansi perbedaan antar kelompok dengan koreksi Bonferroni
-      </div>
-      <div class="method-item">
-        <strong>Concentration Index</strong>
-        Mengikuti Wagstaff et al. (1991). Basis: kemiskinan dan IKP
-      </div>
-      <div class="method-item">
-        <strong>OLS & Tobit</strong>
-        Tobit untuk mengatasi left-censoring pada 16 kabupaten dengan 0 SPPG
-      </div>
-      <div class="method-item">
-        <strong>Quantile Regression</strong>
-        Q10–Q90 dengan SE bootstrap (R=1000) menggunakan package quantreg
-      </div>
-      <div class="method-item">
-        <strong>Robustness Check</strong>
-        Semua analisis diulang tanpa 42 kabupaten dari 6 provinsi Papua
-      </div>
+    <div class="method-grid" style="margin-top:.8rem;">
+      <div class="method-item"><strong>Statistik Deskriptif</strong>Ringkasan distribusi SPPG per kapita berdasarkan 6 kategori IKP/FSVA</div>
+      <div class="method-item"><strong>Kruskal-Wallis + Dunn</strong>Uji signifikansi perbedaan antar kelompok dengan koreksi Bonferroni</div>
+      <div class="method-item"><strong>Concentration Index</strong>Mengikuti Wagstaff et al. (1991). Basis: kemiskinan dan IKP</div>
+      <div class="method-item"><strong>OLS &amp; Tobit</strong>Tobit untuk mengatasi left-censoring pada 16 kabupaten dengan 0 SPPG</div>
+      <div class="method-item"><strong>Quantile Regression</strong>Q10–Q90 dengan SE bootstrap (R=1000) menggunakan package quantreg</div>
+      <div class="method-item"><strong>Robustness Check</strong>Semua analisis diulang tanpa 42 kabupaten dari 6 provinsi Papua</div>
     </div>
-    <p style="font-size:0.78rem;color:#888;margin-top:1rem;">
-      Data: BGN (2026), Bapanas FSVA (2024), BPS (2024), SSGI Kemenkes (2022) |
-      Kode R: <a href="https://github.com/yanuprasetyo/sppg_rawanpangan" target="_blank">github.com/yanuprasetyo/sppg_rawanpangan</a>
-    </p>
+    <p style="font-size:.78rem;color:#888;margin-top:1rem;">Data: BGN (2026), Bapanas FSVA (2024), BPS (2024), SSGI Kemenkes (2022) | Kode R: <a href="https://github.com/yanuprasetyo/sppg_rawanpangan" target="_blank">github.com/yanuprasetyo/sppg_rawanpangan</a></p>
   </div>
-
 </main>
-
 <footer>
-  <p>
-    Prasetyo, Y.E., Aini, Y.N., Bahagijo, S., & Rossinda, S. (2026).
-    <em>Dapur untuk Siapa? Distribusi SPPG dan Kerawanan Pangan di Indonesia.</em>
-  </p>
-  <p style="margin-top:0.5rem;">
-    <a href="https://github.com/yanuprasetyo/sppg_rawanpangan" target="_blank">GitHub Repo</a> |
-    <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> |
-    Dashboard dibangun dengan Chart.js
-  </p>
+  <p>Prasetyo, Y.E., Aini, Y.N., Bahagijo, S., &amp; Rossinda, S. (2026). <em>Dapur untuk Siapa? Distribusi SPPG dan Kerawanan Pangan di Indonesia.</em></p>
+  <p style="margin-top:.5rem;"><a href="https://github.com/yanuprasetyo/sppg_rawanpangan" target="_blank">GitHub Repo</a> | <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a> | Data terverifikasi · 27.427 SPPG · 514 kab/kota lengkap</p>
 </footer>
-
 <script>
-// ── COLOUR PALETTES ──────────────────────────────────────────────────────
-const IKP_COLORS = {
-  1: '#c0392b', 2: '#e67e22', 3: '#f39c12',
-  4: '#2ecc71', 5: '#27ae60', 6: '#1e8449'
-};
-const IKP_LABELS = {
-  1:'Sangat Rentan', 2:'Rentan', 3:'Agak Rentan',
-  4:'Agak Tahan', 5:'Tahan', 6:'Sangat Tahan'
-};
-
-// ── EMBEDDED SUMMARY DATA ────────────────────────────────────────────────
+const IKP_COLORS={1:'#c0392b',2:'#e67e22',3:'#f39c12',4:'#2ecc71',5:'#27ae60',6:'#1e8449'};
+const IKP_LABELS={1:'Sangat Rentan',2:'Rentan',3:'Agak Rentan',4:'Agak Tahan',5:'Tahan',6:'Sangat Tahan'};
 const summaryIKP = [
-  { kat_ikp:1, kat_ikp_f:'Sangat Rentan', n:20,  mean_sppg:1.13,  median_sppg:0.00,  mean_miskin:30.1, mean_stunting:33.1 },
-  { kat_ikp:2, kat_ikp_f:'Rentan',        n:19,  mean_sppg:4.36,  median_sppg:3.92,  mean_miskin:23.0, mean_stunting:26.8 },
-  { kat_ikp:3, kat_ikp_f:'Agak Rentan',   n:42,  mean_sppg:6.60,  median_sppg:6.50,  mean_miskin:16.9, mean_stunting:22.4 },
-  { kat_ikp:4, kat_ikp_f:'Agak Tahan',    n:111, mean_sppg:8.77,  median_sppg:8.62,  mean_miskin:10.7, mean_stunting:19.8 },
-  { kat_ikp:5, kat_ikp_f:'Tahan',         n:216, mean_sppg:9.36,  median_sppg:9.68,  mean_miskin:8.3,  mean_stunting:20.3 },
-  { kat_ikp:6, kat_ikp_f:'Sangat Tahan',  n:106, mean_sppg:9.00,  median_sppg:8.57,  mean_miskin:6.7,  mean_stunting:18.5 },
+  { kat_ikp:1, kat_ikp_f:"Sangat Rentan", n:20, mean_sppg:1.13, median_sppg:0.0, mean_miskin:30.06, mean_stunting:37.26 },
+  { kat_ikp:2, kat_ikp_f:"Rentan", n:19, mean_sppg:4.36, median_sppg:3.92, mean_miskin:23.0, mean_stunting:30.14 },
+  { kat_ikp:3, kat_ikp_f:"Agak Rentan", n:42, mean_sppg:6.6, median_sppg:6.5, mean_miskin:16.85, mean_stunting:30.62 },
+  { kat_ikp:4, kat_ikp_f:"Agak Tahan", n:111, mean_sppg:8.77, median_sppg:8.62, mean_miskin:10.68, mean_stunting:24.16 },
+  { kat_ikp:5, kat_ikp_f:"Tahan", n:216, mean_sppg:9.36, median_sppg:9.68, mean_miskin:8.29, mean_stunting:20.11 },
+  { kat_ikp:6, kat_ikp_f:"Sangat Tahan", n:106, mean_sppg:9.0, median_sppg:8.57, mean_miskin:6.71, mean_stunting:19.32 }
 ];
-
-// Quantile regression results
-const qrData = {
-  taus: ['Q10','Q25','Q50','Q75','Q90'],
-  ikp: {
-    full:   { est:[0.058,0.111,0.116,0.139,0.120], ci_low:[0.027,0.062,0.059,0.076,0.053], ci_high:[0.089,0.160,0.173,0.202,0.187] },
-    nopapua:{ est:[0.015,0.063,0.053,0.082,0.090], ci_low:[-0.038,0.002,-0.020,0.015,0.004], ci_high:[0.068,0.124,0.126,0.149,0.176] }
-  },
-  stunting: {
-    full:   { est:[-0.027,-0.055,-0.066,-0.051,-0.060], ci_low:[-0.070,-0.114,-0.123,-0.108,-0.125], ci_high:[0.016,0.004,-0.009,0.006,0.005] },
-    nopapua:{ est:[-0.037,-0.052,-0.047,-0.046,-0.053], ci_low:[-0.090,-0.127,-0.110,-0.097,-0.133], ci_high:[0.016,0.023,0.016,0.005,0.027] }
-  }
-};
-
-// ── ALL KABKOTA DATA (embedded sample - full data from JSON in production) ─
-// In production, load from docs/data/kabkota.json
-// Here we embed representative data for demo
-let allData = [];
-let filteredData = [];
-
-// Simulate loading from JSON — in real deployment replace with fetch()
-function loadDemoData() {
-  // Representative sample across all IKP categories
+const qrData={taus:['Q10','Q25','Q50','Q75','Q90'],ikp:{full:{est:[0.058,0.111,0.116,0.139,0.120],ci_low:[0.027,0.062,0.059,0.076,0.053],ci_high:[0.089,0.160,0.173,0.202,0.187]},nopapua:{est:[0.015,0.063,0.053,0.082,0.090],ci_low:[-0.038,0.002,-0.020,0.015,0.004],ci_high:[0.068,0.124,0.126,0.149,0.176]}},stunting:{full:{est:[-0.027,-0.055,-0.066,-0.051,-0.060],ci_low:[-0.070,-0.114,-0.123,-0.108,-0.125],ci_high:[0.016,0.004,-0.009,0.006,0.005]},nopapua:{est:[-0.037,-0.052,-0.047,-0.046,-0.053],ci_low:[-0.090,-0.127,-0.110,-0.097,-0.133],ci_high:[0.016,0.023,0.016,0.005,0.027]}}};
+let allData=[], filteredData=[];
+function loadData(){
   allData = [
-    {provinsi:"Papua Pegunungan",kabkota:"Nduga",ikp:19.9,kat_ikp:1,sppg_per100k:0,pct_miskin:32.9,pct_stunting:36.0,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Tengah",kabkota:"Puncak",ikp:23.8,kat_ikp:1,sppg_per100k:0,pct_miskin:36.9,pct_stunting:42.5,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Pegunungan",kabkota:"Mamberamo Tengah",ikp:26.4,kat_ikp:1,sppg_per100k:0,pct_miskin:32.2,pct_stunting:42.0,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Tengah",kabkota:"Paniai",ikp:27.3,kat_ikp:1,sppg_per100k:0,pct_miskin:36.3,pct_stunting:29.6,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Tengah",kabkota:"Intan Jaya",ikp:27.3,kat_ikp:1,sppg_per100k:0,pct_miskin:39.2,pct_stunting:48.4,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Pegunungan",kabkota:"Tolikara",ikp:31.1,kat_ikp:1,sppg_per100k:0,pct_miskin:28.8,pct_stunting:46.4,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Tengah",kabkota:"Dogiyai",ikp:36.3,kat_ikp:1,sppg_per100k:0,pct_miskin:29.3,pct_stunting:55.8,n_sppg:0,is_papua:true},
-    {provinsi:"Papua Tengah",kabkota:"Puncak Jaya",ikp:40.0,kat_ikp:1,sppg_per100k:0,pct_miskin:35.5,pct_stunting:36.3,n_sppg:0,is_papua:true},
-    {provinsi:"Nusa Tenggara Timur",kabkota:"Sumba Timur",ikp:42.1,kat_ikp:2,sppg_per100k:3.2,pct_miskin:28.4,pct_stunting:38.9,n_sppg:9,is_papua:false},
-    {provinsi:"Nusa Tenggara Timur",kabkota:"Sabu Raijua",ikp:44.8,kat_ikp:2,sppg_per100k:4.1,pct_miskin:31.2,pct_stunting:41.2,n_sppg:5,is_papua:false},
-    {provinsi:"Maluku",kabkota:"Kepulauan Tanimbar",ikp:48.3,kat_ikp:2,sppg_per100k:5.2,pct_miskin:22.1,pct_stunting:34.7,n_sppg:11,is_papua:false},
-    {provinsi:"Sulawesi Tengah",kabkota:"Donggala",ikp:57.4,kat_ikp:3,sppg_per100k:6.8,pct_miskin:17.3,pct_stunting:28.4,n_sppg:21,is_papua:false},
-    {provinsi:"Kalimantan Barat",kabkota:"Melawi",ikp:59.1,kat_ikp:3,sppg_per100k:5.9,pct_miskin:18.6,pct_stunting:31.2,n_sppg:14,is_papua:false},
-    {provinsi:"Aceh",kabkota:"Aceh Selatan",ikp:77.2,kat_ikp:5,sppg_per100k:12.6,pct_miskin:9.9,pct_stunting:34.2,n_sppg:31,is_papua:false},
-    {provinsi:"Aceh",kabkota:"Aceh Barat",ikp:73.9,kat_ikp:5,sppg_per100k:9.0,pct_miskin:15.5,pct_stunting:25.6,n_sppg:19,is_papua:false},
-    {provinsi:"Jawa Barat",kabkota:"Bogor",ikp:79.2,kat_ikp:6,sppg_per100k:8.1,pct_miskin:7.6,pct_stunting:27.2,n_sppg:421,is_papua:false},
-    {provinsi:"Jawa Tengah",kabkota:"Semarang",ikp:80.4,kat_ikp:6,sppg_per100k:9.3,pct_miskin:6.1,pct_stunting:18.9,n_sppg:185,is_papua:false},
-    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Selatan",ikp:73.1,kat_ikp:5,sppg_per100k:5.98,pct_miskin:3.2,pct_stunting:14.9,n_sppg:132,is_papua:false},
-    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Timur",ikp:73.0,kat_ikp:5,sppg_per100k:7.95,pct_miskin:3.9,pct_stunting:16.4,n_sppg:245,is_papua:false},
-    {provinsi:"Bali",kabkota:"Badung",ikp:88.8,kat_ikp:6,sppg_per100k:5.01,pct_miskin:1.9,pct_stunting:7.2,n_sppg:29,is_papua:false},
-    {provinsi:"Bali",kabkota:"Kota Denpasar",ikp:83.8,kat_ikp:6,sppg_per100k:6.11,pct_miskin:2.2,pct_stunting:10.4,n_sppg:47,is_papua:false},
-    {provinsi:"DI Yogyakarta",kabkota:"Sleman",ikp:85.5,kat_ikp:6,sppg_per100k:11.6,pct_miskin:6.7,pct_stunting:17.3,n_sppg:138,is_papua:false},
-    {provinsi:"Jawa Timur",kabkota:"Sampang",ikp:66.3,kat_ikp:4,sppg_per100k:10.4,pct_miskin:19.4,pct_stunting:38.1,n_sppg:67,is_papua:false},
-    {provinsi:"Sulawesi Selatan",kabkota:"Jeneponto",ikp:68.4,kat_ikp:4,sppg_per100k:9.8,pct_miskin:16.8,pct_stunting:40.2,n_sppg:44,is_papua:false},
-    {provinsi:"Kalimantan Timur",kabkota:"Mahakam Ulu",ikp:66.3,kat_ikp:4,sppg_per100k:0,pct_miskin:10.1,pct_stunting:23.2,n_sppg:0,is_papua:false},
-    {provinsi:"Sumatera Barat",kabkota:"Kepulauan Mentawai",ikp:67.4,kat_ikp:4,sppg_per100k:0,pct_miskin:13.2,pct_stunting:26.2,n_sppg:0,is_papua:false},
-    {provinsi:"Bengkulu",kabkota:"Lebong",ikp:74.8,kat_ikp:5,sppg_per100k:5.9,pct_miskin:10.1,pct_stunting:22.7,n_sppg:4,is_papua:false},
-    {provinsi:"Gorontalo",kabkota:"Boalemo",ikp:69.8,kat_ikp:5,sppg_per100k:3.8,pct_miskin:16.4,pct_stunting:8.0,n_sppg:6,is_papua:false},
-    {provinsi:"Banten",kabkota:"Kota Tangerang Selatan",ikp:78.2,kat_ikp:6,sppg_per100k:8.5,pct_miskin:2.4,pct_stunting:10.5,n_sppg:120,is_papua:false},
-    {provinsi:"Banten",kabkota:"Lebak",ikp:75.2,kat_ikp:5,sppg_per100k:13.5,pct_miskin:8.0,pct_stunting:32.4,n_sppg:199,is_papua:false},
+    {provinsi:"Papua Pegunungan",kabkota:"Nduga",ikp:19.9,kat_ikp:1,sppg_per100k:0.0,pct_miskin:32.89,pct_stunting:36.0,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Puncak",ikp:23.8,kat_ikp:1,sppg_per100k:0.0,pct_miskin:36.94,pct_stunting:42.5,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Mamberamo Tengah",ikp:26.4,kat_ikp:1,sppg_per100k:0.0,pct_miskin:32.2,pct_stunting:42.0,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Paniai",ikp:27.3,kat_ikp:1,sppg_per100k:0.0,pct_miskin:36.31,pct_stunting:29.6,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Intan Jaya",ikp:27.3,kat_ikp:1,sppg_per100k:0.0,pct_miskin:39.21,pct_stunting:48.4,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Yahukimo",ikp:27.4,kat_ikp:1,sppg_per100k:0.52,pct_miskin:30.61,pct_stunting:37.7,n_sppg:2,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Deiyai",ikp:29.0,kat_ikp:1,sppg_per100k:0.91,pct_miskin:37.29,pct_stunting:30.6,n_sppg:1,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Tolikara",ikp:31.1,kat_ikp:1,sppg_per100k:0.0,pct_miskin:28.75,pct_stunting:46.4,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Lanny Jaya",ikp:31.5,kat_ikp:1,sppg_per100k:2.8,pct_miskin:31.59,pct_stunting:35.4,n_sppg:6,is_papua:true},
+    {provinsi:"Papua Barat",kabkota:"Pegunungan Arfak",ikp:33.1,kat_ikp:1,sppg_per100k:0.0,pct_miskin:30.88,pct_stunting:39.3,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Pegunungan Bintang",ikp:33.3,kat_ikp:1,sppg_per100k:0.0,pct_miskin:25.87,pct_stunting:41.4,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Dogiyai",ikp:36.3,kat_ikp:1,sppg_per100k:0.0,pct_miskin:29.34,pct_stunting:55.8,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Pegunungan",kabkota:"Yalimo",ikp:37.4,kat_ikp:1,sppg_per100k:0.0,pct_miskin:27.35,pct_stunting:35.1,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Tengah",kabkota:"Puncak Jaya",ikp:40.0,kat_ikp:1,sppg_per100k:0.0,pct_miskin:35.46,pct_stunting:36.3,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Selatan",kabkota:"Mappi",ikp:42.4,kat_ikp:1,sppg_per100k:0.84,pct_miskin:28.46,pct_stunting:29.9,n_sppg:1,is_papua:true},
+    {provinsi:"Maluku",kabkota:"Kota Ambon",ikp:42.4,kat_ikp:1,sppg_per100k:8.65,pct_miskin:4.34,pct_stunting:19.7,n_sppg:32,is_papua:false},
+    {provinsi:"Papua Pegunungan",kabkota:"Jayawijaya",ikp:42.5,kat_ikp:1,sppg_per100k:1.74,pct_miskin:29.08,pct_stunting:41.3,n_sppg:5,is_papua:true},
+    {provinsi:"Papua Barat Daya",kabkota:"Tambrauw",ikp:44.2,kat_ikp:1,sppg_per100k:0.0,pct_miskin:28.94,pct_stunting:37.9,n_sppg:0,is_papua:true},
+    {provinsi:"Maluku",kabkota:"Kepulauan Aru",ikp:45.2,kat_ikp:1,sppg_per100k:1.77,pct_miskin:23.1,pct_stunting:37.6,n_sppg:2,is_papua:false},
+    {provinsi:"Papua",kabkota:"Waropen",ikp:45.3,kat_ikp:1,sppg_per100k:5.44,pct_miskin:32.6,pct_stunting:22.3,n_sppg:2,is_papua:true},
+    {provinsi:"Papua",kabkota:"Supiori",ikp:46.1,kat_ikp:2,sppg_per100k:3.92,pct_miskin:42.56,pct_stunting:37.5,n_sppg:1,is_papua:true},
+    {provinsi:"Papua Selatan",kabkota:"Asmat",ikp:46.2,kat_ikp:2,sppg_per100k:3.25,pct_miskin:28.47,pct_stunting:28.3,n_sppg:4,is_papua:true},
+    {provinsi:"Papua Barat Daya",kabkota:"Sorong Selatan",ikp:46.2,kat_ikp:2,sppg_per100k:5.15,pct_miskin:17.66,pct_stunting:31.3,n_sppg:3,is_papua:true},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Konawe Kepulauan",ikp:46.4,kat_ikp:2,sppg_per100k:4.88,pct_miskin:14.42,pct_stunting:26.5,n_sppg:2,is_papua:false},
+    {provinsi:"Papua Selatan",kabkota:"Boven Digoel",ikp:46.5,kat_ikp:2,sppg_per100k:1.4,pct_miskin:21.96,pct_stunting:30.2,n_sppg:1,is_papua:true},
+    {provinsi:"Papua",kabkota:"Mamberamo Raya",ikp:47.0,kat_ikp:2,sppg_per100k:0.0,pct_miskin:35.09,pct_stunting:33.8,n_sppg:0,is_papua:true},
+    {provinsi:"Papua Barat Daya",kabkota:"Maybrat",ikp:48.6,kat_ikp:2,sppg_per100k:0.0,pct_miskin:29.0,pct_stunting:30.7,n_sppg:0,is_papua:true},
+    {provinsi:"Maluku",kabkota:"Buru Selatan",ikp:48.8,kat_ikp:2,sppg_per100k:3.59,pct_miskin:14.84,pct_stunting:39.7,n_sppg:3,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sumba Barat Daya",ikp:49.2,kat_ikp:2,sppg_per100k:2.34,pct_miskin:25.66,pct_stunting:47.5,n_sppg:8,is_papua:false},
+    {provinsi:"Papua",kabkota:"Biak Numfor",ikp:49.6,kat_ikp:2,sppg_per100k:6.23,pct_miskin:25.73,pct_stunting:20.6,n_sppg:9,is_papua:true},
+    {provinsi:"Maluku Utara",kabkota:"Pulau Taliabu",ikp:49.7,kat_ikp:2,sppg_per100k:11.1,pct_miskin:6.63,pct_stunting:24.9,n_sppg:7,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Kepulauan Sula",ikp:50.1,kat_ikp:2,sppg_per100k:8.94,pct_miskin:7.65,pct_stunting:22.5,n_sppg:10,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Maluku Barat Daya",ikp:50.6,kat_ikp:2,sppg_per100k:3.34,pct_miskin:27.65,pct_stunting:23.8,n_sppg:3,is_papua:false},
+    {provinsi:"Papua Barat",kabkota:"Teluk Wondama",ikp:51.1,kat_ikp:2,sppg_per100k:4.2,pct_miskin:27.57,pct_stunting:29.2,n_sppg:2,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sabu Raijua",ikp:51.4,kat_ikp:2,sppg_per100k:2.05,pct_miskin:27.18,pct_stunting:32.2,n_sppg:2,is_papua:false},
+    {provinsi:"Papua",kabkota:"Kepulauan Yapen",ikp:52.4,kat_ikp:2,sppg_per100k:7.4,pct_miskin:28.0,pct_stunting:33.5,n_sppg:9,is_papua:true},
+    {provinsi:"Papua Barat",kabkota:"Fakfak",ikp:52.9,kat_ikp:2,sppg_per100k:7.55,pct_miskin:19.86,pct_stunting:21.0,n_sppg:7,is_papua:true},
+    {provinsi:"Maluku Utara",kabkota:"Halmahera Barat",ikp:53.1,kat_ikp:2,sppg_per100k:6.41,pct_miskin:7.9,pct_stunting:22.1,n_sppg:9,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sumba Tengah",ikp:53.4,kat_ikp:2,sppg_per100k:1.04,pct_miskin:29.23,pct_stunting:37.4,n_sppg:1,is_papua:false},
+    {provinsi:"Papua Barat",kabkota:"Teluk Bintuni",ikp:53.6,kat_ikp:3,sppg_per100k:6.46,pct_miskin:25.34,pct_stunting:22.3,n_sppg:6,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Lembata",ikp:54.2,kat_ikp:3,sppg_per100k:2.72,pct_miskin:23.27,pct_stunting:25.7,n_sppg:4,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Muna",ikp:54.4,kat_ikp:3,sppg_per100k:12.36,pct_miskin:12.4,pct_stunting:25.0,n_sppg:29,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Kota Subulussalam",ikp:54.6,kat_ikp:3,sppg_per100k:14.49,pct_miskin:13.88,pct_stunting:27.5,n_sppg:15,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Nias Barat",ikp:54.6,kat_ikp:3,sppg_per100k:7.92,pct_miskin:22.47,pct_stunting:34.4,n_sppg:8,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Maluku Tengah",ikp:54.7,kat_ikp:3,sppg_per100k:5.55,pct_miskin:16.71,pct_stunting:27.0,n_sppg:25,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Halmahera Selatan",ikp:54.9,kat_ikp:3,sppg_per100k:6.96,pct_miskin:4.81,pct_stunting:32.3,n_sppg:19,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sumba Barat",ikp:55.1,kat_ikp:3,sppg_per100k:1.87,pct_miskin:26.47,pct_stunting:35.2,n_sppg:3,is_papua:false},
+    {provinsi:"Papua Barat Daya",kabkota:"Sorong",ikp:55.2,kat_ikp:3,sppg_per100k:4.79,pct_miskin:25.1,pct_stunting:25.1,n_sppg:6,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Rote Ndao",ikp:55.3,kat_ikp:3,sppg_per100k:5.07,pct_miskin:24.37,pct_stunting:32.4,n_sppg:8,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Alor",ikp:55.7,kat_ikp:3,sppg_per100k:4.31,pct_miskin:18.29,pct_stunting:37.4,n_sppg:10,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Buton Tengah",ikp:56.0,kat_ikp:3,sppg_per100k:12.81,pct_miskin:13.4,pct_stunting:31.8,n_sppg:16,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Kota Tidore Kepulauan",ikp:56.2,kat_ikp:3,sppg_per100k:7.29,pct_miskin:6.54,pct_stunting:16.6,n_sppg:9,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Seram Bagian Barat",ikp:56.2,kat_ikp:3,sppg_per100k:7.29,pct_miskin:21.85,pct_stunting:33.8,n_sppg:17,is_papua:false},
+    {provinsi:"Papua",kabkota:"Keerom",ikp:56.3,kat_ikp:3,sppg_per100k:9.17,pct_miskin:17.76,pct_stunting:24.4,n_sppg:6,is_papua:true},
+    {provinsi:"Maluku",kabkota:"Maluku Tenggara Barat",ikp:56.4,kat_ikp:3,sppg_per100k:1.49,pct_miskin:23.38,pct_stunting:29.5,n_sppg:2,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Singkil",ikp:56.4,kat_ikp:3,sppg_per100k:12.11,pct_miskin:17.07,pct_stunting:34.2,n_sppg:17,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Timor Tengah Selatan",ikp:56.5,kat_ikp:3,sppg_per100k:2.43,pct_miskin:24.5,pct_stunting:56.8,n_sppg:12,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Belu",ikp:56.5,kat_ikp:3,sppg_per100k:3.67,pct_miskin:12.79,pct_stunting:44.3,n_sppg:9,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Seram Bagian Timur",ikp:56.9,kat_ikp:3,sppg_per100k:3.95,pct_miskin:20.9,pct_stunting:35.0,n_sppg:6,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sumba Timur",ikp:56.9,kat_ikp:3,sppg_per100k:1.5,pct_miskin:25.64,pct_stunting:30.9,n_sppg:4,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Halmahera Tengah",ikp:57.6,kat_ikp:3,sppg_per100k:1.55,pct_miskin:9.16,pct_stunting:19.7,n_sppg:1,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Nagekeo",ikp:57.7,kat_ikp:3,sppg_per100k:6.36,pct_miskin:12.18,pct_stunting:25.0,n_sppg:11,is_papua:false},
+    {provinsi:"Papua Barat Daya",kabkota:"Raja Ampat",ikp:57.8,kat_ikp:3,sppg_per100k:9.57,pct_miskin:16.57,pct_stunting:37.4,n_sppg:7,is_papua:true},
+    {provinsi:"Sulawesi Utara",kabkota:"Kepulauan Sangihe",ikp:58.3,kat_ikp:3,sppg_per100k:6.23,pct_miskin:10.91,pct_stunting:24.2,n_sppg:9,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Muna Barat",ikp:58.4,kat_ikp:3,sppg_per100k:14.84,pct_miskin:12.83,pct_stunting:28.4,n_sppg:14,is_papua:false},
+    {provinsi:"Papua",kabkota:"Sarmi",ikp:58.5,kat_ikp:3,sppg_per100k:6.84,pct_miskin:15.17,pct_stunting:31.6,n_sppg:3,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Timor Tengah Utara",ikp:58.6,kat_ikp:3,sppg_per100k:4.93,pct_miskin:20.17,pct_stunting:47.3,n_sppg:14,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Buru",ikp:59.0,kat_ikp:3,sppg_per100k:5.48,pct_miskin:15.11,pct_stunting:25.4,n_sppg:8,is_papua:false},
+    {provinsi:"Papua Tengah",kabkota:"Nabire",ikp:59.0,kat_ikp:3,sppg_per100k:7.85,pct_miskin:22.65,pct_stunting:21.7,n_sppg:14,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Flores Timur",ikp:59.2,kat_ikp:3,sppg_per100k:2.99,pct_miskin:10.88,pct_stunting:31.3,n_sppg:9,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Kupang",ikp:59.5,kat_ikp:3,sppg_per100k:7.25,pct_miskin:20.32,pct_stunting:39.5,n_sppg:28,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Malaka",ikp:59.6,kat_ikp:3,sppg_per100k:6.55,pct_miskin:13.52,pct_stunting:31.6,n_sppg:13,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Manggarai Timur",ikp:59.6,kat_ikp:3,sppg_per100k:2.61,pct_miskin:23.51,pct_stunting:38.8,n_sppg:8,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Mamasa",ikp:59.7,kat_ikp:3,sppg_per100k:8.98,pct_miskin:13.66,pct_stunting:35.7,n_sppg:16,is_papua:false},
+    {provinsi:"Papua Barat",kabkota:"Manokwari Selatan",ikp:59.9,kat_ikp:3,sppg_per100k:9.92,pct_miskin:26.52,pct_stunting:26.4,n_sppg:4,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Kota Kupang",ikp:59.9,kat_ikp:3,sppg_per100k:8.56,pct_miskin:7.57,pct_stunting:26.9,n_sppg:42,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Mamuju Utara",ikp:60.6,kat_ikp:3,sppg_per100k:11.41,pct_miskin:4.96,pct_stunting:36.7,n_sppg:24,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Manggarai Barat",ikp:60.9,kat_ikp:3,sppg_per100k:3.83,pct_miskin:16.09,pct_stunting:31.1,n_sppg:11,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Nias Utara",ikp:61.0,kat_ikp:3,sppg_per100k:8.53,pct_miskin:20.79,pct_stunting:25.8,n_sppg:14,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Murung Raya",ikp:61.1,kat_ikp:3,sppg_per100k:1.64,pct_miskin:6.19,pct_stunting:15.8,n_sppg:2,is_papua:false},
+    {provinsi:"Papua",kabkota:"Kota Jayapura",ikp:61.2,kat_ikp:3,sppg_per100k:6.95,pct_miskin:12.03,pct_stunting:24.1,n_sppg:30,is_papua:true},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Manggarai",ikp:61.5,kat_ikp:4,sppg_per100k:8.39,pct_miskin:18.1,pct_stunting:41.0,n_sppg:29,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Nias Selatan",ikp:61.7,kat_ikp:4,sppg_per100k:6.43,pct_miskin:16.16,pct_stunting:37.6,n_sppg:26,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Tana Toraja",ikp:61.7,kat_ikp:4,sppg_per100k:5.37,pct_miskin:10.54,pct_stunting:27.5,n_sppg:16,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Sikka",ikp:61.8,kat_ikp:4,sppg_per100k:5.42,pct_miskin:11.25,pct_stunting:32.3,n_sppg:19,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Halmahera Utara",ikp:61.8,kat_ikp:4,sppg_per100k:9.4,pct_miskin:4.35,pct_stunting:21.8,n_sppg:20,is_papua:false},
+    {provinsi:"Riau",kabkota:"Kepulauan Meranti",ikp:61.9,kat_ikp:4,sppg_per100k:10.58,pct_miskin:20.51,pct_stunting:18.0,n_sppg:23,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Donggala",ikp:61.9,kat_ikp:4,sppg_per100k:6.96,pct_miskin:14.66,pct_stunting:29.6,n_sppg:22,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Bangkalan",ikp:62.0,kat_ikp:4,sppg_per100k:11.66,pct_miskin:18.25,pct_stunting:17.6,n_sppg:131,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Simeulue",ikp:62.1,kat_ikp:4,sppg_per100k:10.83,pct_miskin:15.52,pct_stunting:25.5,n_sppg:11,is_papua:false},
+    {provinsi:"Papua Barat Daya",kabkota:"Kota Sorong",ikp:62.6,kat_ikp:4,sppg_per100k:5.55,pct_miskin:13.55,pct_stunting:29.3,n_sppg:17,is_papua:true},
+    {provinsi:"Jawa Barat",kabkota:"Kota Bogor",ikp:62.7,kat_ikp:4,sppg_per100k:13.22,pct_miskin:5.89,pct_stunting:21.1,n_sppg:144,is_papua:false},
+    {provinsi:"Papua Tengah",kabkota:"Mimika",ikp:62.9,kat_ikp:4,sppg_per100k:5.67,pct_miskin:13.7,pct_stunting:28.4,n_sppg:19,is_papua:true},
+    {provinsi:"Maluku",kabkota:"Maluku Tenggara",ikp:62.9,kat_ikp:4,sppg_per100k:3.11,pct_miskin:21.16,pct_stunting:28.1,n_sppg:4,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Ende",ikp:63.1,kat_ikp:4,sppg_per100k:5.58,pct_miskin:21.31,pct_stunting:30.7,n_sppg:16,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Pulau Morotai",ikp:63.3,kat_ikp:4,sppg_per100k:3.65,pct_miskin:4.49,pct_stunting:17.7,n_sppg:3,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Karimun",ikp:63.3,kat_ikp:4,sppg_per100k:10.8,pct_miskin:5.16,pct_stunting:21.4,n_sppg:29,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Pidie",ikp:63.4,kat_ikp:4,sppg_per100k:11.71,pct_miskin:16.46,pct_stunting:32.6,n_sppg:54,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Toraja Utara",ikp:63.4,kat_ikp:4,sppg_per100k:6.63,pct_miskin:10.05,pct_stunting:27.6,n_sppg:19,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Sampang",ikp:63.4,kat_ikp:4,sppg_per100k:14.64,pct_miskin:20.61,pct_stunting:18.9,n_sppg:152,is_papua:false},
+    {provinsi:"Maluku",kabkota:"Kota Tual",ikp:63.5,kat_ikp:4,sppg_per100k:4.21,pct_miskin:19.39,pct_stunting:25.2,n_sppg:4,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Pamekasan",ikp:63.5,kat_ikp:4,sppg_per100k:14.31,pct_miskin:12.77,pct_stunting:22.3,n_sppg:129,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Gunungsitoli",ikp:63.7,kat_ikp:4,sppg_per100k:11.35,pct_miskin:13.85,pct_stunting:17.4,n_sppg:17,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kepulauan Seribu",ikp:63.7,kat_ikp:4,sppg_per100k:23.85,pct_miskin:12.37,pct_stunting:16.9,n_sppg:7,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Nias",ikp:63.8,kat_ikp:4,sppg_per100k:8.79,pct_miskin:14.51,pct_stunting:26.1,n_sppg:14,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Kota Bengkulu",ikp:63.8,kat_ikp:4,sppg_per100k:1.71,pct_miskin:11.91,pct_stunting:16.1,n_sppg:46,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Buton Selatan",ikp:63.8,kat_ikp:4,sppg_per100k:8.62,pct_miskin:13.64,pct_stunting:38.9,n_sppg:9,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Kepulauan Talaud",ikp:64.1,kat_ikp:4,sppg_per100k:4.99,pct_miskin:8.34,pct_stunting:11.6,n_sppg:5,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Kota Baubau",ikp:64.2,kat_ikp:4,sppg_per100k:12.13,pct_miskin:6.83,pct_stunting:29.8,n_sppg:21,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Kota Ternate",ikp:64.3,kat_ikp:4,sppg_per100k:10.5,pct_miskin:3.34,pct_stunting:16.6,n_sppg:23,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Banggai Laut",ikp:64.3,kat_ikp:4,sppg_per100k:9.23,pct_miskin:12.71,pct_stunting:26.6,n_sppg:7,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Kota Sabang",ikp:64.7,kat_ikp:4,sppg_per100k:6.73,pct_miskin:12.75,pct_stunting:23.4,n_sppg:3,is_papua:false},
+    {provinsi:"Nusa Tenggara Timur",kabkota:"Ngada",ikp:64.7,kat_ikp:4,sppg_per100k:5.59,pct_miskin:11.22,pct_stunting:28.9,n_sppg:10,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Seruyan",ikp:64.7,kat_ikp:4,sppg_per100k:2.77,pct_miskin:6.72,pct_stunting:32.2,n_sppg:5,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Polewali Mandar",ikp:64.7,kat_ikp:4,sppg_per100k:11.5,pct_miskin:14.02,pct_stunting:31.5,n_sppg:59,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Buton Utara",ikp:64.8,kat_ikp:4,sppg_per100k:7.0,pct_miskin:13.22,pct_stunting:30.5,n_sppg:5,is_papua:false},
+    {provinsi:"Kalimantan Utara",kabkota:"Tana Tidung",ikp:64.8,kat_ikp:4,sppg_per100k:3.4,pct_miskin:4.56,pct_stunting:7.4,n_sppg:1,is_papua:false},
+    {provinsi:"Papua",kabkota:"Jayapura",ikp:64.8,kat_ikp:4,sppg_per100k:13.04,pct_miskin:13.03,pct_stunting:22.5,n_sppg:23,is_papua:true},
+    {provinsi:"Aceh",kabkota:"Aceh Utara",ikp:65.1,kat_ikp:4,sppg_per100k:12.23,pct_miskin:14.27,pct_stunting:19.2,n_sppg:79,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Timur",ikp:65.2,kat_ikp:4,sppg_per100k:12.1,pct_miskin:11.24,pct_stunting:36.7,n_sppg:55,is_papua:false},
+    {provinsi:"Banten",kabkota:"Pandeglang",ikp:65.2,kat_ikp:4,sppg_per100k:14.44,pct_miskin:8.51,pct_stunting:26.4,n_sppg:195,is_papua:false},
+    {provinsi:"Papua Selatan",kabkota:"Merauke",ikp:65.6,kat_ikp:4,sppg_per100k:4.91,pct_miskin:11.31,pct_stunting:18.5,n_sppg:12,is_papua:true},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Buton",ikp:65.7,kat_ikp:4,sppg_per100k:8.75,pct_miskin:13.46,pct_stunting:28.8,n_sppg:11,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Cirebon",ikp:65.8,kat_ikp:4,sppg_per100k:13.71,pct_miskin:8.66,pct_stunting:14.9,n_sppg:48,is_papua:false},
+    {provinsi:"Riau",kabkota:"Indragiri Hilir",ikp:65.8,kat_ikp:4,sppg_per100k:5.58,pct_miskin:4.95,pct_stunting:25.0,n_sppg:39,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Pidie Jaya",ikp:65.8,kat_ikp:4,sppg_per100k:11.14,pct_miskin:16.12,pct_stunting:31.6,n_sppg:19,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Kota Bitung",ikp:65.9,kat_ikp:4,sppg_per100k:4.17,pct_miskin:5.81,pct_stunting:25.1,n_sppg:10,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Kaur",ikp:66.0,kat_ikp:4,sppg_per100k:13.61,pct_miskin:15.82,pct_stunting:15.9,n_sppg:7,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Toli-Toli",ikp:66.1,kat_ikp:4,sppg_per100k:8.82,pct_miskin:12.2,pct_stunting:26.9,n_sppg:21,is_papua:false},
+    {provinsi:"Riau",kabkota:"Rokan Hulu",ikp:66.2,kat_ikp:4,sppg_per100k:8.53,pct_miskin:8.71,pct_stunting:21.4,n_sppg:52,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Mahakam Ulu",ikp:66.3,kat_ikp:4,sppg_per100k:0.0,pct_miskin:10.09,pct_stunting:23.2,n_sppg:0,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Kepulauan Anambas",ikp:66.3,kat_ikp:4,sppg_per100k:5.88,pct_miskin:6.35,pct_stunting:15.8,n_sppg:3,is_papua:false},
+    {provinsi:"Papua Barat",kabkota:"Kaimana",ikp:66.4,kat_ikp:4,sppg_per100k:8.71,pct_miskin:13.83,pct_stunting:20.2,n_sppg:6,is_papua:true},
+    {provinsi:"Lampung",kabkota:"Lampung Timur",ikp:66.4,kat_ikp:4,sppg_per100k:12.76,pct_miskin:12.15,pct_stunting:14.0,n_sppg:150,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Tapanuli Tengah",ikp:66.4,kat_ikp:4,sppg_per100k:7.55,pct_miskin:11.03,pct_stunting:32.3,n_sppg:31,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Kubu Raya",ikp:66.5,kat_ikp:4,sppg_per100k:10.88,pct_miskin:3.99,pct_stunting:30.2,n_sppg:73,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Sambas",ikp:66.6,kat_ikp:4,sppg_per100k:8.83,pct_miskin:6.37,pct_stunting:36.4,n_sppg:59,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Sibolga",ikp:66.6,kat_ikp:4,sppg_per100k:11.86,pct_miskin:10.28,pct_stunting:18.1,n_sppg:11,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Gorontalo Utara",ikp:66.6,kat_ikp:4,sppg_per100k:3.65,pct_miskin:15.89,pct_stunting:25.6,n_sppg:5,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Malang",ikp:66.7,kat_ikp:4,sppg_per100k:9.13,pct_miskin:3.85,pct_stunting:22.8,n_sppg:81,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Tanjung Balai",ikp:66.8,kat_ikp:4,sppg_per100k:10.5,pct_miskin:10.67,pct_stunting:5.6,n_sppg:20,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Bengkulu Utara",ikp:66.9,kat_ikp:4,sppg_per100k:42.89,pct_miskin:10.07,pct_stunting:20.7,n_sppg:30,is_papua:false},
+    {provinsi:"Riau",kabkota:"Indragiri Hulu",ikp:67.0,kat_ikp:4,sppg_per100k:5.83,pct_miskin:5.83,pct_stunting:20.0,n_sppg:28,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Labuhan Batu Selatan",ikp:67.0,kat_ikp:4,sppg_per100k:6.04,pct_miskin:6.8,pct_stunting:22.0,n_sppg:21,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Kolaka Utara",ikp:67.0,kat_ikp:4,sppg_per100k:7.78,pct_miskin:12.94,pct_stunting:23.6,n_sppg:12,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Minahasa Tenggara",ikp:67.0,kat_ikp:4,sppg_per100k:5.71,pct_miskin:10.31,pct_stunting:21.9,n_sppg:7,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Gorontalo",ikp:67.0,kat_ikp:4,sppg_per100k:8.62,pct_miskin:14.89,pct_stunting:28.3,n_sppg:36,is_papua:false},
+    {provinsi:"Riau",kabkota:"Rokan Hilir",ikp:67.1,kat_ikp:4,sppg_per100k:10.26,pct_miskin:7.16,pct_stunting:24.5,n_sppg:71,is_papua:false},
+    {provinsi:"Maluku Utara",kabkota:"Halmahera Timur",ikp:67.3,kat_ikp:4,sppg_per100k:6.9,pct_miskin:10.54,pct_stunting:24.3,n_sppg:7,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kepulauan Mentawai",ikp:67.4,kat_ikp:4,sppg_per100k:0.0,pct_miskin:13.22,pct_stunting:26.2,n_sppg:0,is_papua:false},
+    {provinsi:"Papua Barat",kabkota:"Manokwari",ikp:67.4,kat_ikp:4,sppg_per100k:11.37,pct_miskin:17.38,pct_stunting:23.5,n_sppg:24,is_papua:true},
+    {provinsi:"Sulawesi Tengah",kabkota:"Buol",ikp:67.6,kat_ikp:4,sppg_per100k:5.77,pct_miskin:12.48,pct_stunting:36.9,n_sppg:9,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Bone",ikp:67.7,kat_ikp:4,sppg_per100k:5.45,pct_miskin:9.13,pct_stunting:26.0,n_sppg:46,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Tanggamus",ikp:67.8,kat_ikp:4,sppg_per100k:10.07,pct_miskin:10.1,pct_stunting:24.9,n_sppg:69,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kuningan",ikp:68.0,kat_ikp:4,sppg_per100k:13.99,pct_miskin:10.74,pct_stunting:22.7,n_sppg:173,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Lingga",ikp:68.0,kat_ikp:4,sppg_per100k:6.74,pct_miskin:9.12,pct_stunting:19.8,n_sppg:7,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Utara",ikp:68.1,kat_ikp:4,sppg_per100k:5.98,pct_miskin:6.33,pct_stunting:19.7,n_sppg:109,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Probolinggo",ikp:68.2,kat_ikp:4,sppg_per100k:9.33,pct_miskin:16.31,pct_stunting:26.3,n_sppg:112,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Lampung Utara",ikp:68.2,kat_ikp:4,sppg_per100k:11.32,pct_miskin:15.78,pct_stunting:20.0,n_sppg:76,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Kapuas Hulu",ikp:68.3,kat_ikp:4,sppg_per100k:5.51,pct_miskin:6.86,pct_stunting:23.6,n_sppg:15,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Bolaang Mongondow Timur",ikp:68.3,kat_ikp:4,sppg_per100k:3.18,pct_miskin:5.32,pct_stunting:18.8,n_sppg:3,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Tulangbawang",ikp:68.3,kat_ikp:4,sppg_per100k:9.99,pct_miskin:7.54,pct_stunting:18.3,n_sppg:46,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Kota Lhokseumawe",ikp:68.5,kat_ikp:4,sppg_per100k:12.6,pct_miskin:9.01,pct_stunting:20.8,n_sppg:26,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Temanggung",ikp:68.5,kat_ikp:4,sppg_per100k:10.76,pct_miskin:7.78,pct_stunting:27.3,n_sppg:89,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Jember",ikp:68.5,kat_ikp:4,sppg_per100k:8.54,pct_miskin:8.67,pct_stunting:30.4,n_sppg:225,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Surakarta",ikp:68.5,kat_ikp:4,sppg_per100k:14.15,pct_miskin:7.69,pct_stunting:16.2,n_sppg:75,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Enrekang",ikp:68.5,kat_ikp:4,sppg_per100k:5.3,pct_miskin:10.73,pct_stunting:34.3,n_sppg:13,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Cilacap",ikp:68.5,kat_ikp:4,sppg_per100k:9.83,pct_miskin:9.41,pct_stunting:15.6,n_sppg:203,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Probolinggo",ikp:68.6,kat_ikp:4,sppg_per100k:12.96,pct_miskin:5.69,pct_stunting:23.1,n_sppg:33,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Mandailing Natal",ikp:68.6,kat_ikp:4,sppg_per100k:6.14,pct_miskin:7.91,pct_stunting:22.2,n_sppg:32,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Poso",ikp:68.7,kat_ikp:4,sppg_per100k:8.89,pct_miskin:12.9,pct_stunting:21.1,n_sppg:23,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Mojokerto",ikp:68.8,kat_ikp:4,sppg_per100k:12.87,pct_miskin:5.05,pct_stunting:11.7,n_sppg:18,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Melawi",ikp:68.8,kat_ikp:4,sppg_per100k:7.98,pct_miskin:10.51,pct_stunting:35.2,n_sppg:20,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Luwu Timur",ikp:68.8,kat_ikp:4,sppg_per100k:4.36,pct_miskin:5.79,pct_stunting:21.8,n_sppg:14,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Konawe Utara",ikp:68.8,kat_ikp:4,sppg_per100k:7.8,pct_miskin:11.89,pct_stunting:27.0,n_sppg:6,is_papua:false},
+    {provinsi:"Kalimantan Utara",kabkota:"Malinau",ikp:68.8,kat_ikp:4,sppg_per100k:3.39,pct_miskin:5.56,pct_stunting:26.0,n_sppg:3,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Tapanuli Selatan",ikp:68.9,kat_ikp:4,sppg_per100k:4.32,pct_miskin:6.16,pct_stunting:6.6,n_sppg:14,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Padang Lawas",ikp:68.9,kat_ikp:4,sppg_per100k:4.48,pct_miskin:7.32,pct_stunting:25.2,n_sppg:13,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Barat Daya",ikp:68.9,kat_ikp:4,sppg_per100k:10.4,pct_miskin:13.3,pct_stunting:36.2,n_sppg:17,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Majene",ikp:69.0,kat_ikp:4,sppg_per100k:14.83,pct_miskin:12.98,pct_stunting:37.5,n_sppg:28,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Padang Lawas Utara",ikp:69.0,kat_ikp:4,sppg_per100k:2.41,pct_miskin:8.04,pct_stunting:30.0,n_sppg:7,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Barito Selatan",ikp:69.0,kat_ikp:4,sppg_per100k:3.62,pct_miskin:4.94,pct_stunting:33.3,n_sppg:5,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Konawe Selatan",ikp:69.1,kat_ikp:4,sppg_per100k:8.53,pct_miskin:11.18,pct_stunting:21.3,n_sppg:29,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Kota Langsa",ikp:69.1,kat_ikp:4,sppg_per100k:13.22,pct_miskin:8.59,pct_stunting:15.6,n_sppg:27,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Padang Pariaman",ikp:69.1,kat_ikp:4,sppg_per100k:5.05,pct_miskin:5.86,pct_stunting:26.6,n_sppg:24,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Tenggara",ikp:69.2,kat_ikp:4,sppg_per100k:19.89,pct_miskin:9.78,pct_stunting:30.9,n_sppg:48,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Sukamara",ikp:69.2,kat_ikp:4,sppg_per100k:1.43,pct_miskin:4.02,pct_stunting:20.0,n_sppg:1,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Tojo Una-Una",ikp:69.2,kat_ikp:4,sppg_per100k:8.03,pct_miskin:14.67,pct_stunting:16.5,n_sppg:14,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Batu Bara",ikp:69.3,kat_ikp:4,sppg_per100k:9.1,pct_miskin:10.1,pct_stunting:23.0,n_sppg:41,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Gunung Mas",ikp:69.4,kat_ikp:4,sppg_per100k:1.99,pct_miskin:5.48,pct_stunting:14.1,n_sppg:3,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Wonosobo",ikp:69.4,kat_ikp:4,sppg_per100k:12.32,pct_miskin:13.34,pct_stunting:23.9,n_sppg:116,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Bandung Barat",ikp:69.5,kat_ikp:4,sppg_per100k:12.07,pct_miskin:9.87,pct_stunting:30.8,n_sppg:233,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Blitar",ikp:69.6,kat_ikp:5,sppg_per100k:19.65,pct_miskin:6.6,pct_stunting:11.4,n_sppg:31,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Kota Kendari",ikp:69.7,kat_ikp:5,sppg_per100k:10.42,pct_miskin:4.18,pct_stunting:24.4,n_sppg:40,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Sintang",ikp:69.7,kat_ikp:5,sppg_per100k:2.2,pct_miskin:7.93,pct_stunting:31.0,n_sppg:10,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Kepahiang",ikp:69.7,kat_ikp:5,sppg_per100k:3.79,pct_miskin:10.38,pct_stunting:17.0,n_sppg:8,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Blitar",ikp:69.7,kat_ikp:5,sppg_per100k:9.9,pct_miskin:7.57,pct_stunting:17.8,n_sppg:127,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Banggai Kepulauan",ikp:69.7,kat_ikp:5,sppg_per100k:9.46,pct_miskin:11.49,pct_stunting:28.4,n_sppg:12,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Kota Palu",ikp:69.7,kat_ikp:5,sppg_per100k:9.19,pct_miskin:5.26,pct_stunting:25.6,n_sppg:37,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Mamuju Tengah",ikp:69.7,kat_ikp:5,sppg_per100k:12.63,pct_miskin:7.22,pct_stunting:31.5,n_sppg:19,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Malang",ikp:69.8,kat_ikp:5,sppg_per100k:8.54,pct_miskin:8.78,pct_stunting:23.3,n_sppg:237,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Kota Tanjung Pinang",ikp:69.8,kat_ikp:5,sppg_per100k:9.9,pct_miskin:5.96,pct_stunting:12.9,n_sppg:24,is_papua:false},
+    {provinsi:"Riau",kabkota:"Kota Pekanbaru",ikp:69.8,kat_ikp:5,sppg_per100k:12.91,pct_miskin:3.19,pct_stunting:14.5,n_sppg:135,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Boalemo",ikp:69.8,kat_ikp:5,sppg_per100k:3.82,pct_miskin:16.37,pct_stunting:8.0,n_sppg:6,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Wakatobi",ikp:69.8,kat_ikp:5,sppg_per100k:7.39,pct_miskin:13.4,pct_stunting:24.1,n_sppg:9,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Medan",ikp:69.8,kat_ikp:5,sppg_per100k:8.29,pct_miskin:7.25,pct_stunting:15.4,n_sppg:208,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Tegal",ikp:69.9,kat_ikp:5,sppg_per100k:10.97,pct_miskin:7.28,pct_stunting:18.0,n_sppg:32,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Bener Meriah",ikp:69.9,kat_ikp:5,sppg_per100k:9.01,pct_miskin:16.2,pct_stunting:32.8,n_sppg:16,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Kerinci",ikp:69.9,kat_ikp:5,sppg_per100k:10.01,pct_miskin:7.48,pct_stunting:16.4,n_sppg:26,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Landak",ikp:70.0,kat_ikp:5,sppg_per100k:8.38,pct_miskin:8.9,pct_stunting:28.6,n_sppg:36,is_papua:false},
+    {provinsi:"Riau",kabkota:"Kota Dumai",ikp:70.2,kat_ikp:5,sppg_per100k:9.97,pct_miskin:3.08,pct_stunting:16.9,n_sppg:34,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Pekalongan",ikp:70.2,kat_ikp:5,sppg_per100k:11.89,pct_miskin:6.14,pct_stunting:19.3,n_sppg:39,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Purworejo",ikp:70.2,kat_ikp:5,sppg_per100k:9.03,pct_miskin:10.06,pct_stunting:14.9,n_sppg:73,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Simalungun",ikp:70.3,kat_ikp:5,sppg_per100k:6.09,pct_miskin:6.91,pct_stunting:26.0,n_sppg:66,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Lombok Timur",ikp:70.4,kat_ikp:5,sppg_per100k:17.6,pct_miskin:13.53,pct_stunting:33.0,n_sppg:257,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Pakpak Bharat",ikp:70.4,kat_ikp:5,sppg_per100k:6.87,pct_miskin:6.4,pct_stunting:27.5,n_sppg:4,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Kediri",ikp:70.4,kat_ikp:5,sppg_per100k:17.76,pct_miskin:6.04,pct_stunting:17.6,n_sppg:54,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Depok",ikp:70.6,kat_ikp:5,sppg_per100k:9.25,pct_miskin:2.31,pct_stunting:12.5,n_sppg:201,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Kota Tomohon",ikp:70.6,kat_ikp:5,sppg_per100k:10.41,pct_miskin:4.86,pct_stunting:10.8,n_sppg:11,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Asahan",ikp:70.7,kat_ikp:5,sppg_per100k:9.82,pct_miskin:7.18,pct_stunting:13.9,n_sppg:82,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Boyolali",ikp:70.7,kat_ikp:5,sppg_per100k:11.09,pct_miskin:8.71,pct_stunting:24.5,n_sppg:124,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Bondowoso",ikp:70.7,kat_ikp:5,sppg_per100k:10.12,pct_miskin:12.2,pct_stunting:11.2,n_sppg:81,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Pusat",ikp:70.7,kat_ikp:5,sppg_per100k:4.65,pct_miskin:4.7,pct_stunting:20.3,n_sppg:48,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Kolaka",ikp:70.8,kat_ikp:5,sppg_per100k:7.08,pct_miskin:10.19,pct_stunting:29.7,n_sppg:18,is_papua:false},
+    {provinsi:"Kalimantan Utara",kabkota:"Bulungan",ikp:70.8,kat_ikp:5,sppg_per100k:8.51,pct_miskin:7.26,pct_stunting:15.9,n_sppg:14,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Pasuruan",ikp:70.8,kat_ikp:5,sppg_per100k:6.66,pct_miskin:8.21,pct_stunting:26.1,n_sppg:112,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Banyumas",ikp:70.9,kat_ikp:5,sppg_per100k:11.63,pct_miskin:11.15,pct_stunting:19.6,n_sppg:219,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Takalar",ikp:70.9,kat_ikp:5,sppg_per100k:13.22,pct_miskin:7.27,pct_stunting:24.0,n_sppg:43,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Parigi Moutong",ikp:71.0,kat_ikp:5,sppg_per100k:4.26,pct_miskin:13.51,pct_stunting:22.3,n_sppg:20,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Langkat",ikp:71.1,kat_ikp:5,sppg_per100k:7.45,pct_miskin:8.42,pct_stunting:16.0,n_sppg:82,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Pemalang",ikp:71.1,kat_ikp:5,sppg_per100k:9.39,pct_miskin:13.32,pct_stunting:19.1,n_sppg:148,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Tegal",ikp:71.1,kat_ikp:5,sppg_per100k:10.1,pct_miskin:6.16,pct_stunting:15.9,n_sppg:173,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kediri",ikp:71.1,kat_ikp:5,sppg_per100k:10.91,pct_miskin:9.81,pct_stunting:7.9,n_sppg:187,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Tasikmalaya",ikp:71.1,kat_ikp:5,sppg_per100k:15.36,pct_miskin:10.15,pct_stunting:17.0,n_sppg:299,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Ponorogo",ikp:71.2,kat_ikp:5,sppg_per100k:7.95,pct_miskin:8.86,pct_stunting:13.4,n_sppg:77,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Labuhan Batu",ikp:71.2,kat_ikp:5,sppg_per100k:7.31,pct_miskin:7.37,pct_stunting:25.3,n_sppg:39,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Barat",ikp:71.2,kat_ikp:5,sppg_per100k:2.69,pct_miskin:3.91,pct_stunting:17.4,n_sppg:67,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Dairi",ikp:71.3,kat_ikp:5,sppg_per100k:10.52,pct_miskin:6.98,pct_stunting:29.0,n_sppg:36,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Banjarnegara",ikp:71.3,kat_ikp:5,sppg_per100k:10.02,pct_miskin:13.28,pct_stunting:20.6,n_sppg:108,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Rejang Lebong",ikp:71.3,kat_ikp:5,sppg_per100k:4.78,pct_miskin:11.71,pct_stunting:24.7,n_sppg:9,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Kota Gorontalo",ikp:71.4,kat_ikp:5,sppg_per100k:9.41,pct_miskin:5.31,pct_stunting:31.2,n_sppg:20,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Minahasa Utara",ikp:71.4,kat_ikp:5,sppg_per100k:5.47,pct_miskin:6.05,pct_stunting:18.9,n_sppg:13,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Kota Bandar Lampung",ikp:71.4,kat_ikp:5,sppg_per100k:11.64,pct_miskin:6.95,pct_stunting:14.8,n_sppg:144,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Luwu",ikp:71.5,kat_ikp:5,sppg_per100k:5.07,pct_miskin:10.97,pct_stunting:23.6,n_sppg:20,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Pasuruan",ikp:71.5,kat_ikp:5,sppg_per100k:10.21,pct_miskin:6.18,pct_stunting:18.3,n_sppg:23,is_papua:false},
+    {provinsi:"DI Yogyakarta",kabkota:"Gunung Kidul",ikp:71.5,kat_ikp:5,sppg_per100k:9.68,pct_miskin:14.15,pct_stunting:19.7,n_sppg:73,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Kepulauan Selayar",ikp:71.5,kat_ikp:5,sppg_per100k:8.23,pct_miskin:10.61,pct_stunting:25.7,n_sppg:12,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Natuna",ikp:71.5,kat_ikp:5,sppg_per100k:13.67,pct_miskin:4.81,pct_stunting:18.5,n_sppg:12,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Agam",ikp:71.6,kat_ikp:5,sppg_per100k:5.92,pct_miskin:5.97,pct_stunting:27.0,n_sppg:34,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Bombana",ikp:71.7,kat_ikp:5,sppg_per100k:10.87,pct_miskin:10.14,pct_stunting:24.7,n_sppg:18,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Situbondo",ikp:71.7,kat_ikp:5,sppg_per100k:6.5,pct_miskin:11.17,pct_stunting:10.6,n_sppg:46,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Ciamis",ikp:71.7,kat_ikp:5,sppg_per100k:14.3,pct_miskin:7.19,pct_stunting:20.3,n_sppg:182,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Morowali Utara",ikp:71.8,kat_ikp:5,sppg_per100k:1.52,pct_miskin:10.38,pct_stunting:20.4,n_sppg:2,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Majalengka",ikp:71.8,kat_ikp:5,sppg_per100k:11.57,pct_miskin:10.31,pct_stunting:18.0,n_sppg:159,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Magelang",ikp:71.8,kat_ikp:5,sppg_per100k:15.46,pct_miskin:5.68,pct_stunting:15.3,n_sppg:19,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Klaten",ikp:72.0,kat_ikp:5,sppg_per100k:11.69,pct_miskin:11.0,pct_stunting:20.8,n_sppg:153,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Seluma",ikp:72.0,kat_ikp:5,sppg_per100k:13.28,pct_miskin:15.98,pct_stunting:22.6,n_sppg:12,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Gayo Lues",ikp:72.0,kat_ikp:5,sppg_per100k:15.38,pct_miskin:16.77,pct_stunting:20.6,n_sppg:17,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kebumen",ikp:72.1,kat_ikp:5,sppg_per100k:12.36,pct_miskin:13.58,pct_stunting:18.0,n_sppg:179,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Pacitan",ikp:72.1,kat_ikp:5,sppg_per100k:8.14,pct_miskin:12.97,pct_stunting:11.7,n_sppg:48,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Empat Lawang",ikp:72.1,kat_ikp:5,sppg_per100k:6.81,pct_miskin:10.48,pct_stunting:31.9,n_sppg:24,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Tebo",ikp:72.1,kat_ikp:5,sppg_per100k:3.85,pct_miskin:5.97,pct_stunting:24.2,n_sppg:14,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Lampung Tengah",ikp:72.1,kat_ikp:5,sppg_per100k:10.85,pct_miskin:9.59,pct_stunting:15.5,n_sppg:169,is_papua:false},
+    {provinsi:"DI Yogyakarta",kabkota:"Kota Yogyakarta",ikp:72.1,kat_ikp:5,sppg_per100k:12.51,pct_miskin:6.14,pct_stunting:14.8,n_sppg:47,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Bone Bolango",ikp:72.2,kat_ikp:5,sppg_per100k:8.01,pct_miskin:13.16,pct_stunting:23.0,n_sppg:14,is_papua:false},
+    {provinsi:"Riau",kabkota:"Kampar",ikp:72.2,kat_ikp:5,sppg_per100k:12.37,pct_miskin:6.29,pct_stunting:16.2,n_sppg:114,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Bojonegoro",ikp:72.2,kat_ikp:5,sppg_per100k:10.78,pct_miskin:11.49,pct_stunting:12.0,n_sppg:144,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Pematang Siantar",ikp:72.3,kat_ikp:5,sppg_per100k:14.22,pct_miskin:6.24,pct_stunting:12.2,n_sppg:40,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Lamandau",ikp:72.3,kat_ikp:5,sppg_per100k:1.87,pct_miskin:3.33,pct_stunting:18.3,n_sppg:2,is_papua:false},
+    {provinsi:"DI Yogyakarta",kabkota:"Kulon Progo",ikp:72.3,kat_ikp:5,sppg_per100k:11.79,pct_miskin:14.53,pct_stunting:18.0,n_sppg:53,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Serdang Bedagai",ikp:72.3,kat_ikp:5,sppg_per100k:9.46,pct_miskin:6.18,pct_stunting:19.0,n_sppg:67,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Maros",ikp:72.4,kat_ikp:5,sppg_per100k:9.89,pct_miskin:8.9,pct_stunting:22.4,n_sppg:42,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Kotawaringin Barat",ikp:72.6,kat_ikp:5,sppg_per100k:4.51,pct_miskin:4.27,pct_stunting:16.5,n_sppg:13,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Pesawaran",ikp:72.6,kat_ikp:5,sppg_per100k:12.11,pct_miskin:10.93,pct_stunting:15.5,n_sppg:62,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Solok",ikp:72.7,kat_ikp:5,sppg_per100k:9.04,pct_miskin:6.52,pct_stunting:29.5,n_sppg:38,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Pulang Pisau",ikp:72.7,kat_ikp:5,sppg_per100k:2.82,pct_miskin:4.79,pct_stunting:27.9,n_sppg:4,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Barito Utara",ikp:72.7,kat_ikp:5,sppg_per100k:3.6,pct_miskin:5.52,pct_stunting:20.4,n_sppg:6,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Barru",ikp:72.8,kat_ikp:5,sppg_per100k:12.0,pct_miskin:8.0,pct_stunting:26.9,n_sppg:23,is_papua:false},
+    {provinsi:"Riau",kabkota:"Kuantan Singingi",ikp:72.8,kat_ikp:5,sppg_per100k:8.7,pct_miskin:6.99,pct_stunting:23.1,n_sppg:31,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Bengkulu Tengah",ikp:72.8,kat_ikp:5,sppg_per100k:7.29,pct_miskin:9.74,pct_stunting:23.4,n_sppg:8,is_papua:false},
+    {provinsi:"Kalimantan Utara",kabkota:"Kota Tarakan",ikp:72.9,kat_ikp:5,sppg_per100k:9.25,pct_miskin:5.03,pct_stunting:12.6,n_sppg:24,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Musi Rawas Utara",ikp:72.9,kat_ikp:5,sppg_per100k:9.35,pct_miskin:15.25,pct_stunting:22.0,n_sppg:19,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Timur",ikp:73.0,kat_ikp:5,sppg_per100k:7.94,pct_miskin:3.94,pct_stunting:16.4,n_sppg:245,is_papua:false},
+    {provinsi:"DKI Jakarta",kabkota:"Kota Jakarta Selatan",ikp:73.1,kat_ikp:5,sppg_per100k:5.98,pct_miskin:3.23,pct_stunting:14.9,n_sppg:132,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Bekasi",ikp:73.1,kat_ikp:5,sppg_per100k:9.84,pct_miskin:3.96,pct_stunting:11.7,n_sppg:261,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Batu",ikp:73.1,kat_ikp:5,sppg_per100k:11.43,pct_miskin:2.86,pct_stunting:24.5,n_sppg:26,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Bintan",ikp:73.2,kat_ikp:5,sppg_per100k:11.0,pct_miskin:4.77,pct_stunting:16.3,n_sppg:19,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Kota Pontianak",ikp:73.2,kat_ikp:5,sppg_per100k:12.16,pct_miskin:4.0,pct_stunting:22.3,n_sppg:84,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Cirebon",ikp:73.2,kat_ikp:5,sppg_per100k:10.95,pct_miskin:10.23,pct_stunting:18.0,n_sppg:267,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Ketapang",ikp:73.2,kat_ikp:5,sppg_per100k:8.96,pct_miskin:8.44,pct_stunting:17.9,n_sppg:55,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Tuban",ikp:73.2,kat_ikp:5,sppg_per100k:11.32,pct_miskin:14.13,pct_stunting:11.3,n_sppg:140,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Ogan Komering Ulu",ikp:73.2,kat_ikp:5,sppg_per100k:7.68,pct_miskin:10.08,pct_stunting:22.0,n_sppg:30,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Lumajang",ikp:73.2,kat_ikp:5,sppg_per100k:7.68,pct_miskin:8.6,pct_stunting:23.4,n_sppg:89,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Binjai",ikp:73.2,kat_ikp:5,sppg_per100k:13.03,pct_miskin:4.71,pct_stunting:25.6,n_sppg:41,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Ogan Ilir",ikp:73.3,kat_ikp:5,sppg_per100k:11.66,pct_miskin:11.69,pct_stunting:27.4,n_sppg:52,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Surabaya",ikp:73.3,kat_ikp:5,sppg_per100k:4.18,pct_miskin:3.56,pct_stunting:8.5,n_sppg:123,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Magelang",ikp:73.4,kat_ikp:5,sppg_per100k:11.01,pct_miskin:9.9,pct_stunting:19.3,n_sppg:150,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Tulang Bawang Barat",ikp:73.5,kat_ikp:5,sppg_per100k:13.78,pct_miskin:6.72,pct_stunting:13.4,n_sppg:42,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Sumenep",ikp:73.5,kat_ikp:5,sppg_per100k:8.93,pct_miskin:17.02,pct_stunting:11.2,n_sppg:104,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Lombok Barat",ikp:73.5,kat_ikp:5,sppg_per100k:15.62,pct_miskin:11.9,pct_stunting:27.3,n_sppg:123,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Besar",ikp:73.5,kat_ikp:5,sppg_per100k:12.73,pct_miskin:11.05,pct_stunting:32.3,n_sppg:56,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Kota Prabumulih",ikp:73.6,kat_ikp:5,sppg_per100k:6.24,pct_miskin:9.75,pct_stunting:11.6,n_sppg:13,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Kota Kotamobagu",ikp:73.6,kat_ikp:5,sppg_per100k:5.31,pct_miskin:5.14,pct_stunting:23.1,n_sppg:7,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Nganjuk",ikp:73.7,kat_ikp:5,sppg_per100k:11.0,pct_miskin:10.06,pct_stunting:22.8,n_sppg:126,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Blora",ikp:73.8,kat_ikp:5,sppg_per100k:10.54,pct_miskin:10.58,pct_stunting:21.7,n_sppg:97,is_papua:false},
+    {provinsi:"Bali",kabkota:"Klungkung",ikp:73.8,kat_ikp:5,sppg_per100k:5.7,pct_miskin:5.18,pct_stunting:5.2,n_sppg:12,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kudus",ikp:73.8,kat_ikp:5,sppg_per100k:13.22,pct_miskin:6.59,pct_stunting:13.2,n_sppg:119,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Minahasa Selatan",ikp:73.8,kat_ikp:5,sppg_per100k:4.92,pct_miskin:8.26,pct_stunting:28.1,n_sppg:12,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Bolaang Mongondow Selatan",ikp:73.9,kat_ikp:5,sppg_per100k:8.05,pct_miskin:10.52,pct_stunting:23.6,n_sppg:6,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Barat",ikp:73.9,kat_ikp:5,sppg_per100k:9.02,pct_miskin:15.5,pct_stunting:25.6,n_sppg:19,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Barito Timur",ikp:74.0,kat_ikp:5,sppg_per100k:4.11,pct_miskin:6.1,pct_stunting:21.7,n_sppg:5,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Bukittinggi",ikp:74.1,kat_ikp:5,sppg_per100k:11.83,pct_miskin:3.78,pct_stunting:16.8,n_sppg:15,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Sukoharjo",ikp:74.1,kat_ikp:5,sppg_per100k:11.47,pct_miskin:6.83,pct_stunting:16.8,n_sppg:110,is_papua:false},
+    {provinsi:"Bali",kabkota:"Bangli",ikp:74.2,kat_ikp:5,sppg_per100k:4.55,pct_miskin:4.83,pct_stunting:8.3,n_sppg:12,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Semarang",ikp:74.3,kat_ikp:5,sppg_per100k:11.56,pct_miskin:6.3,pct_stunting:14.5,n_sppg:128,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Semarang",ikp:74.3,kat_ikp:5,sppg_per100k:10.37,pct_miskin:3.8,pct_stunting:11.2,n_sppg:180,is_papua:false},
+    {provinsi:"Riau",kabkota:"Pelalawan",ikp:74.3,kat_ikp:5,sppg_per100k:7.95,pct_miskin:7.24,pct_stunting:16.8,n_sppg:34,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Mempawah",ikp:74.3,kat_ikp:5,sppg_per100k:10.17,pct_miskin:4.49,pct_stunting:28.6,n_sppg:33,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Wajo",ikp:74.3,kat_ikp:5,sppg_per100k:9.9,pct_miskin:5.86,pct_stunting:20.5,n_sppg:39,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Nagan Raya",ikp:74.4,kat_ikp:5,sppg_per100k:7.76,pct_miskin:15.42,pct_stunting:35.5,n_sppg:14,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Pesisir Barat",ikp:74.4,kat_ikp:5,sppg_per100k:7.89,pct_miskin:12.13,pct_stunting:19.8,n_sppg:14,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Bandung",ikp:74.4,kat_ikp:5,sppg_per100k:10.51,pct_miskin:3.78,pct_stunting:22.8,n_sppg:270,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Purwakarta",ikp:74.4,kat_ikp:5,sppg_per100k:14.88,pct_miskin:7.87,pct_stunting:14.4,n_sppg:160,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Tapanuli Utara",ikp:74.5,kat_ikp:5,sppg_per100k:10.16,pct_miskin:7.47,pct_stunting:32.5,n_sppg:34,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Subang",ikp:74.5,kat_ikp:5,sppg_per100k:11.68,pct_miskin:9.23,pct_stunting:12.4,n_sppg:197,is_papua:false},
+    {provinsi:"Kepulauan Riau",kabkota:"Kota Batam",ikp:74.5,kat_ikp:5,sppg_per100k:10.56,pct_miskin:3.81,pct_stunting:14.0,n_sppg:139,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Sumbawa",ikp:74.6,kat_ikp:5,sppg_per100k:4.54,pct_miskin:11.79,pct_stunting:29.8,n_sppg:25,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Tengah",ikp:74.6,kat_ikp:5,sppg_per100k:10.76,pct_miskin:12.29,pct_stunting:31.4,n_sppg:25,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Cimahi",ikp:74.6,kat_ikp:5,sppg_per100k:10.91,pct_miskin:4.2,pct_stunting:22.3,n_sppg:67,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Merangin",ikp:74.7,kat_ikp:5,sppg_per100k:5.74,pct_miskin:8.07,pct_stunting:9.6,n_sppg:22,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Bengkulu Selatan",ikp:74.7,kat_ikp:5,sppg_per100k:7.66,pct_miskin:15.72,pct_stunting:18.3,n_sppg:11,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Pinrang",ikp:74.7,kat_ikp:5,sppg_per100k:10.34,pct_miskin:8.38,pct_stunting:22.2,n_sppg:45,is_papua:false},
+    {provinsi:"Gorontalo",kabkota:"Pohuwato",ikp:74.8,kat_ikp:5,sppg_per100k:5.08,pct_miskin:15.24,pct_stunting:18.0,n_sppg:8,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Lebong",ikp:74.8,kat_ikp:5,sppg_per100k:5.89,pct_miskin:10.1,pct_stunting:22.7,n_sppg:4,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Tulungagung",ikp:74.8,kat_ikp:5,sppg_per100k:11.73,pct_miskin:5.96,pct_stunting:13.6,n_sppg:132,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Kapuas",ikp:74.8,kat_ikp:5,sppg_per100k:2.73,pct_miskin:5.48,pct_stunting:22.5,n_sppg:12,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Bolaang Mongondow Utara",ikp:75.0,kat_ikp:5,sppg_per100k:2.24,pct_miskin:7.15,pct_stunting:26.3,n_sppg:2,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Pekalongan",ikp:75.0,kat_ikp:5,sppg_per100k:9.51,pct_miskin:8.05,pct_stunting:19.5,n_sppg:99,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Tanjung Jabung Barat",ikp:75.0,kat_ikp:5,sppg_per100k:4.36,pct_miskin:9.67,pct_stunting:7.0,n_sppg:15,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Lombok Tengah",ikp:75.1,kat_ikp:5,sppg_per100k:15.4,pct_miskin:10.68,pct_stunting:24.9,n_sppg:177,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Bengkayang",ikp:75.1,kat_ikp:5,sppg_per100k:7.05,pct_miskin:5.83,pct_stunting:23.4,n_sppg:22,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Sarolangun",ikp:75.1,kat_ikp:5,sppg_per100k:4.77,pct_miskin:8.74,pct_stunting:6.6,n_sppg:15,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Brebes",ikp:75.1,kat_ikp:5,sppg_per100k:9.68,pct_miskin:14.15,pct_stunting:23.1,n_sppg:204,is_papua:false},
+    {provinsi:"Banten",kabkota:"Lebak",ikp:75.2,kat_ikp:5,sppg_per100k:13.46,pct_miskin:8.03,pct_stunting:32.4,n_sppg:199,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Purbalingga",ikp:75.2,kat_ikp:5,sppg_per100k:10.78,pct_miskin:12.55,pct_stunting:22.3,n_sppg:114,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Madiun",ikp:75.2,kat_ikp:5,sppg_per100k:7.33,pct_miskin:10.4,pct_stunting:12.1,n_sppg:56,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Padangsidimpuan",ikp:75.3,kat_ikp:5,sppg_per100k:7.27,pct_miskin:5.61,pct_stunting:30.3,n_sppg:18,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Kota Parepare",ikp:75.3,kat_ikp:5,sppg_per100k:12.66,pct_miskin:4.44,pct_stunting:26.1,n_sppg:21,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Belitung",ikp:75.3,kat_ikp:5,sppg_per100k:6.64,pct_miskin:6.44,pct_stunting:18.1,n_sppg:13,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Sragen",ikp:75.4,kat_ikp:5,sppg_per100k:12.27,pct_miskin:11.22,pct_stunting:15.8,n_sppg:125,is_papua:false},
+    {provinsi:"Riau",kabkota:"Siak",ikp:75.4,kat_ikp:5,sppg_per100k:11.67,pct_miskin:4.4,pct_stunting:16.2,n_sppg:58,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Grobogan",ikp:75.4,kat_ikp:5,sppg_per100k:11.16,pct_miskin:10.63,pct_stunting:25.6,n_sppg:171,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Kota Manado",ikp:75.4,kat_ikp:5,sppg_per100k:9.71,pct_miskin:4.99,pct_stunting:18.8,n_sppg:45,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Karanganyar",ikp:75.5,kat_ikp:5,sppg_per100k:10.57,pct_miskin:8.48,pct_stunting:17.4,n_sppg:103,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Rembang",ikp:75.5,kat_ikp:5,sppg_per100k:12.15,pct_miskin:13.01,pct_stunting:15.8,n_sppg:82,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Bangka Tengah",ikp:75.6,kat_ikp:5,sppg_per100k:6.93,pct_miskin:6.7,pct_stunting:21.2,n_sppg:15,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Sidenreng Rappang",ikp:75.7,kat_ikp:5,sppg_per100k:8.33,pct_miskin:4.91,pct_stunting:20.3,n_sppg:28,is_papua:false},
+    {provinsi:"Bali",kabkota:"Karangasem",ikp:75.7,kat_ikp:5,sppg_per100k:4.74,pct_miskin:6.4,pct_stunting:13.0,n_sppg:24,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Bangka Selatan",ikp:75.7,kat_ikp:5,sppg_per100k:4.21,pct_miskin:4.17,pct_stunting:24.6,n_sppg:9,is_papua:false},
+    {provinsi:"Bali",kabkota:"Buleleng",ikp:75.8,kat_ikp:5,sppg_per100k:4.6,pct_miskin:5.2,pct_stunting:14.8,n_sppg:38,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Sanggau",ikp:75.8,kat_ikp:5,sppg_per100k:5.36,pct_miskin:4.61,pct_stunting:21.3,n_sppg:28,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Jeneponto",ikp:76.0,kat_ikp:5,sppg_per100k:12.63,pct_miskin:11.42,pct_stunting:37.0,n_sppg:54,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Sijunjung",ikp:76.0,kat_ikp:5,sppg_per100k:9.1,pct_miskin:5.15,pct_stunting:28.2,n_sppg:23,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Wonogiri",ikp:76.0,kat_ikp:5,sppg_per100k:8.4,pct_miskin:9.59,pct_stunting:15.1,n_sppg:89,is_papua:false},
+    {provinsi:"Kalimantan Utara",kabkota:"Nunukan",ikp:76.0,kat_ikp:5,sppg_per100k:6.91,pct_miskin:5.27,pct_stunting:21.7,n_sppg:15,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Kota Palangka Raya",ikp:76.0,kat_ikp:5,sppg_per100k:9.1,pct_miskin:3.62,pct_stunting:19.1,n_sppg:29,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Pringsewu",ikp:76.1,kat_ikp:5,sppg_per100k:14.26,pct_miskin:7.6,pct_stunting:19.5,n_sppg:62,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Kota Banda Aceh",ikp:76.1,kat_ikp:5,sppg_per100k:14.4,pct_miskin:5.45,pct_stunting:23.7,n_sppg:39,is_papua:false},
+    {provinsi:"Bengkulu",kabkota:"Mukomuko",ikp:76.1,kat_ikp:5,sppg_per100k:26.3,pct_miskin:10.05,pct_stunting:22.0,n_sppg:13,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Belitung Timur",ikp:76.1,kat_ikp:5,sppg_per100k:8.1,pct_miskin:6.69,pct_stunting:17.1,n_sppg:11,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Sinjai",ikp:76.1,kat_ikp:5,sppg_per100k:9.78,pct_miskin:7.41,pct_stunting:28.6,n_sppg:27,is_papua:false},
+    {provinsi:"Banten",kabkota:"Kota Cilegon",ikp:76.2,kat_ikp:5,sppg_per100k:10.75,pct_miskin:3.44,pct_stunting:19.0,n_sppg:50,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Lahat",ikp:76.2,kat_ikp:5,sppg_per100k:2.82,pct_miskin:13.69,pct_stunting:12.9,n_sppg:13,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Indramayu",ikp:76.2,kat_ikp:5,sppg_per100k:10.05,pct_miskin:11.02,pct_stunting:9.8,n_sppg:196,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Ogan Komering Ulu Selatan",ikp:76.2,kat_ikp:5,sppg_per100k:5.46,pct_miskin:9.17,pct_stunting:16.6,n_sppg:24,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Sekadau",ikp:76.2,kat_ikp:5,sppg_per100k:6.14,pct_miskin:5.61,pct_stunting:14.4,n_sppg:14,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Kota Tebing Tinggi",ikp:76.2,kat_ikp:5,sppg_per100k:13.52,pct_miskin:8.74,pct_stunting:17.6,n_sppg:25,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Bireuen",ikp:76.2,kat_ikp:5,sppg_per100k:12.54,pct_miskin:10.3,pct_stunting:27.1,n_sppg:59,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Sigi",ikp:76.2,kat_ikp:5,sppg_per100k:7.59,pct_miskin:10.47,pct_stunting:33.0,n_sppg:21,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Samosir",ikp:76.3,kat_ikp:5,sppg_per100k:6.14,pct_miskin:10.79,pct_stunting:28.6,n_sppg:9,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Banggai",ikp:76.3,kat_ikp:5,sppg_per100k:7.27,pct_miskin:6.23,pct_stunting:28.7,n_sppg:28,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Bogor",ikp:76.4,kat_ikp:5,sppg_per100k:11.7,pct_miskin:6.26,pct_stunting:18.9,n_sppg:674,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Kota Makassar",ikp:76.4,kat_ikp:5,sppg_per100k:8.63,pct_miskin:4.43,pct_stunting:22.9,n_sppg:128,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Demak",ikp:76.4,kat_ikp:5,sppg_per100k:12.61,pct_miskin:10.87,pct_stunting:10.0,n_sppg:161,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Katingan",ikp:76.5,kat_ikp:5,sppg_per100k:3.39,pct_miskin:5.3,pct_stunting:19.6,n_sppg:6,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Kayong Utara",ikp:76.5,kat_ikp:5,sppg_per100k:11.47,pct_miskin:8.75,pct_stunting:23.8,n_sppg:16,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Ngawi",ikp:76.6,kat_ikp:5,sppg_per100k:8.88,pct_miskin:13.62,pct_stunting:11.4,n_sppg:79,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Bandung",ikp:76.6,kat_ikp:5,sppg_per100k:13.43,pct_miskin:6.04,pct_stunting:24.1,n_sppg:512,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Labuhan Batu Utara",ikp:76.7,kat_ikp:5,sppg_per100k:7.82,pct_miskin:8.42,pct_stunting:17.5,n_sppg:33,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Karawang",ikp:76.7,kat_ikp:5,sppg_per100k:11.2,pct_miskin:7.08,pct_stunting:17.6,n_sppg:292,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Kota Banjarmasin",ikp:76.8,kat_ikp:5,sppg_per100k:9.07,pct_miskin:4.52,pct_stunting:26.5,n_sppg:61,is_papua:false},
+    {provinsi:"DI Yogyakarta",kabkota:"Bantul",ikp:76.8,kat_ikp:5,sppg_per100k:12.1,pct_miskin:11.54,pct_stunting:16.5,n_sppg:125,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Trenggalek",ikp:76.8,kat_ikp:5,sppg_per100k:9.59,pct_miskin:10.29,pct_stunting:6.7,n_sppg:72,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Kota Palopo",ikp:76.8,kat_ikp:5,sppg_per100k:7.94,pct_miskin:7.18,pct_stunting:22.7,n_sppg:16,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Deli Serdang",ikp:76.9,kat_ikp:5,sppg_per100k:10.87,pct_miskin:3.11,pct_stunting:19.6,n_sppg:229,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Bangka Barat",ikp:76.9,kat_ikp:5,sppg_per100k:7.22,pct_miskin:2.92,pct_stunting:19.9,n_sppg:16,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Kota Jambi",ikp:76.9,kat_ikp:5,sppg_per100k:7.24,pct_miskin:7.69,pct_stunting:10.3,n_sppg:47,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Batang Hari",ikp:77.0,kat_ikp:5,sppg_per100k:4.01,pct_miskin:8.27,pct_stunting:18.4,n_sppg:13,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Lombok Utara",ikp:77.0,kat_ikp:5,sppg_per100k:14.14,pct_miskin:20.74,pct_stunting:35.3,n_sppg:38,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Kota Banjar Baru",ikp:77.0,kat_ikp:5,sppg_per100k:10.91,pct_miskin:3.44,pct_stunting:15.4,n_sppg:31,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Lamongan",ikp:77.1,kat_ikp:5,sppg_per100k:12.34,pct_miskin:12.03,pct_stunting:6.9,n_sppg:172,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Sidoarjo",ikp:77.1,kat_ikp:5,sppg_per100k:7.0,pct_miskin:4.4,pct_stunting:10.6,n_sppg:155,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Bekasi",ikp:77.1,kat_ikp:5,sppg_per100k:10.0,pct_miskin:4.36,pct_stunting:18.2,n_sppg:333,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Lampung Barat",ikp:77.2,kat_ikp:5,sppg_per100k:8.99,pct_miskin:9.93,pct_stunting:20.5,n_sppg:29,is_papua:false},
+    {provinsi:"Sulawesi Barat",kabkota:"Mamuju",ikp:77.2,kat_ikp:5,sppg_per100k:11.09,pct_miskin:6.99,pct_stunting:38.7,n_sppg:34,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Selatan",ikp:77.2,kat_ikp:5,sppg_per100k:12.56,pct_miskin:9.89,pct_stunting:34.2,n_sppg:31,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kendal",ikp:77.3,kat_ikp:5,sppg_per100k:11.67,pct_miskin:8.4,pct_stunting:19.2,n_sppg:127,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Toba Samosir",ikp:77.3,kat_ikp:5,sppg_per100k:10.79,pct_miskin:7.21,pct_stunting:27.1,n_sppg:24,is_papua:false},
+    {provinsi:"Kalimantan Barat",kabkota:"Kota Singkawang",ikp:77.5,kat_ikp:6,sppg_per100k:11.65,pct_miskin:4.28,pct_stunting:21.9,n_sppg:30,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Dompu",ikp:77.5,kat_ikp:6,sppg_per100k:6.97,pct_miskin:11.15,pct_stunting:19.8,n_sppg:18,is_papua:false},
+    {provinsi:"Sulawesi Tengah",kabkota:"Morowali",ikp:77.5,kat_ikp:6,sppg_per100k:6.72,pct_miskin:10.38,pct_stunting:22.6,n_sppg:12,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Banyuwangi",ikp:77.6,kat_ikp:6,sppg_per100k:8.45,pct_miskin:6.13,pct_stunting:17.6,n_sppg:150,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Luwu Utara",ikp:77.6,kat_ikp:6,sppg_per100k:4.63,pct_miskin:10.74,pct_stunting:23.6,n_sppg:16,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kota Samarinda",ikp:77.6,kat_ikp:6,sppg_per100k:6.76,pct_miskin:3.45,pct_stunting:20.3,n_sppg:59,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Kota Madiun",ikp:77.7,kat_ikp:6,sppg_per100k:13.64,pct_miskin:3.89,pct_stunting:11.8,n_sppg:28,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Konawe",ikp:77.7,kat_ikp:6,sppg_per100k:9.19,pct_miskin:12.78,pct_stunting:25.0,n_sppg:26,is_papua:false},
+    {provinsi:"Bali",kabkota:"Tabanan",ikp:77.8,kat_ikp:6,sppg_per100k:7.86,pct_miskin:4.23,pct_stunting:7.5,n_sppg:37,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kota Bontang",ikp:77.9,kat_ikp:6,sppg_per100k:10.88,pct_miskin:3.21,pct_stunting:20.7,n_sppg:21,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Bima",ikp:78.0,kat_ikp:6,sppg_per100k:11.8,pct_miskin:12.59,pct_stunting:23.8,n_sppg:66,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kutai Barat",ikp:78.0,kat_ikp:6,sppg_per100k:1.65,pct_miskin:8.72,pct_stunting:27.6,n_sppg:3,is_papua:false},
+    {provinsi:"Bali",kabkota:"Jembrana",ikp:78.0,kat_ikp:6,sppg_per100k:8.8,pct_miskin:4.33,pct_stunting:7.5,n_sppg:29,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Tasikmalaya",ikp:78.1,kat_ikp:6,sppg_per100k:16.28,pct_miskin:10.84,pct_stunting:19.6,n_sppg:125,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Tanah Datar",ikp:78.1,kat_ikp:6,sppg_per100k:7.8,pct_miskin:3.59,pct_stunting:26.9,n_sppg:31,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Soppeng",ikp:78.1,kat_ikp:6,sppg_per100k:7.45,pct_miskin:6.65,pct_stunting:26.6,n_sppg:18,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Kota Mataram",ikp:78.2,kat_ikp:6,sppg_per100k:14.15,pct_miskin:7.15,pct_stunting:23.5,n_sppg:64,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Tamiang",ikp:78.2,kat_ikp:6,sppg_per100k:10.43,pct_miskin:10.84,pct_stunting:27.4,n_sppg:33,is_papua:false},
+    {provinsi:"Banten",kabkota:"Kota Tangerang Selatan",ikp:78.2,kat_ikp:6,sppg_per100k:8.54,pct_miskin:2.39,pct_stunting:10.5,n_sppg:120,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Magetan",ikp:78.3,kat_ikp:6,sppg_per100k:9.67,pct_miskin:9.14,pct_stunting:10.3,n_sppg:67,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Pariaman",ikp:78.4,kat_ikp:6,sppg_per100k:5.97,pct_miskin:3.83,pct_stunting:15.7,n_sppg:6,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Gresik",ikp:78.5,kat_ikp:6,sppg_per100k:10.86,pct_miskin:9.95,pct_stunting:15.2,n_sppg:151,is_papua:false},
+    {provinsi:"Banten",kabkota:"Kota Serang",ikp:78.5,kat_ikp:6,sppg_per100k:12.56,pct_miskin:5.51,pct_stunting:22.9,n_sppg:95,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Bungo",ikp:78.5,kat_ikp:6,sppg_per100k:2.81,pct_miskin:5.17,pct_stunting:20.4,n_sppg:11,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Cianjur",ikp:78.6,kat_ikp:6,sppg_per100k:13.4,pct_miskin:9.82,pct_stunting:7.2,n_sppg:353,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Pangandaran",ikp:78.6,kat_ikp:6,sppg_per100k:12.54,pct_miskin:8.03,pct_stunting:17.3,n_sppg:55,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Dharmasraya",ikp:78.7,kat_ikp:6,sppg_per100k:6.35,pct_miskin:4.61,pct_stunting:20.5,n_sppg:16,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Pasaman Barat",ikp:78.7,kat_ikp:6,sppg_per100k:2.56,pct_miskin:6.3,pct_stunting:26.6,n_sppg:12,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Sukabumi",ikp:78.7,kat_ikp:6,sppg_per100k:12.97,pct_miskin:6.41,pct_stunting:20.5,n_sppg:373,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Tanjung Jabung Timur",ikp:78.7,kat_ikp:6,sppg_per100k:4.52,pct_miskin:9.96,pct_stunting:23.9,n_sppg:11,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Musi Banyuasin",ikp:78.8,kat_ikp:6,sppg_per100k:6.15,pct_miskin:9.97,pct_stunting:14.8,n_sppg:41,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Sawah Lunto",ikp:78.8,kat_ikp:6,sppg_per100k:4.25,pct_miskin:2.72,pct_stunting:20.0,n_sppg:3,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Way Kanan",ikp:78.8,kat_ikp:6,sppg_per100k:10.41,pct_miskin:9.36,pct_stunting:13.9,n_sppg:53,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Solok Selatan",ikp:78.9,kat_ikp:6,sppg_per100k:6.93,pct_miskin:6.0,pct_stunting:21.5,n_sppg:14,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Sukabumi",ikp:78.9,kat_ikp:6,sppg_per100k:13.85,pct_miskin:6.9,pct_stunting:19.7,n_sppg:52,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kota Balikpapan",ikp:78.9,kat_ikp:6,sppg_per100k:5.16,pct_miskin:1.97,pct_stunting:24.8,n_sppg:38,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Pangkajene Dan Kepulauan",ikp:78.9,kat_ikp:6,sppg_per100k:8.47,pct_miskin:11.6,pct_stunting:25.2,n_sppg:31,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Humbang Hasundutan",ikp:79.0,kat_ikp:6,sppg_per100k:11.33,pct_miskin:7.8,pct_stunting:18.3,n_sppg:24,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Kota Pangkal Pinang",ikp:79.1,kat_ikp:6,sppg_per100k:8.04,pct_miskin:4.5,pct_stunting:17.3,n_sppg:19,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Bolaang Mongondow",ikp:79.1,kat_ikp:6,sppg_per100k:4.21,pct_miskin:6.98,pct_stunting:19.3,n_sppg:11,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Garut",ikp:79.1,kat_ikp:6,sppg_per100k:16.73,pct_miskin:9.39,pct_stunting:14.2,n_sppg:465,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Sumedang",ikp:79.2,kat_ikp:6,sppg_per100k:12.46,pct_miskin:8.81,pct_stunting:17.0,n_sppg:150,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Pesisir Selatan",ikp:79.2,kat_ikp:6,sppg_per100k:6.94,pct_miskin:6.52,pct_stunting:26.5,n_sppg:38,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Kota Lubuklinggau",ikp:79.3,kat_ikp:6,sppg_per100k:15.08,pct_miskin:10.49,pct_stunting:20.9,n_sppg:38,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Muaro Jambi",ikp:79.3,kat_ikp:6,sppg_per100k:4.59,pct_miskin:4.32,pct_stunting:18.8,n_sppg:20,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Kota Salatiga",ikp:79.3,kat_ikp:6,sppg_per100k:14.09,pct_miskin:4.2,pct_stunting:14.0,n_sppg:29,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Gowa",ikp:79.4,kat_ikp:6,sppg_per100k:9.65,pct_miskin:6.64,pct_stunting:17.0,n_sppg:81,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Mesuji",ikp:79.4,kat_ikp:6,sppg_per100k:14.07,pct_miskin:5.92,pct_stunting:11.1,n_sppg:35,is_papua:false},
+    {provinsi:"Banten",kabkota:"Tangerang",ikp:79.4,kat_ikp:6,sppg_per100k:9.17,pct_miskin:6.42,pct_stunting:23.4,n_sppg:318,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Siau Tagulandang Biaro",ikp:79.6,kat_ikp:6,sppg_per100k:14.68,pct_miskin:8.32,pct_stunting:19.9,n_sppg:11,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Pasaman",ikp:79.7,kat_ikp:6,sppg_per100k:8.24,pct_miskin:6.02,pct_stunting:29.1,n_sppg:27,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Pati",ikp:79.7,kat_ikp:6,sppg_per100k:12.42,pct_miskin:8.24,pct_stunting:16.5,n_sppg:173,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Hulu Sungai Utara",ikp:79.7,kat_ikp:6,sppg_per100k:7.44,pct_miskin:4.81,pct_stunting:27.6,n_sppg:18,is_papua:false},
+    {provinsi:"Riau",kabkota:"Bengkalis",ikp:79.8,kat_ikp:6,sppg_per100k:14.23,pct_miskin:6.08,pct_stunting:12.5,n_sppg:86,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Tanah Laut",ikp:79.9,kat_ikp:6,sppg_per100k:5.1,pct_miskin:3.0,pct_stunting:22.5,n_sppg:19,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Penukal Abab Lematang Ilir",ikp:80.0,kat_ikp:6,sppg_per100k:5.22,pct_miskin:9.27,pct_stunting:20.5,n_sppg:11,is_papua:false},
+    {provinsi:"Sulawesi Utara",kabkota:"Minahasa",ikp:80.1,kat_ikp:6,sppg_per100k:7.57,pct_miskin:5.88,pct_stunting:19.4,n_sppg:27,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kutai Timur",ikp:80.2,kat_ikp:6,sppg_per100k:3.77,pct_miskin:8.07,pct_stunting:26.9,n_sppg:18,is_papua:false},
+    {provinsi:"Sulawesi Tenggara",kabkota:"Kolaka Timur",ikp:80.3,kat_ikp:6,sppg_per100k:6.11,pct_miskin:12.57,pct_stunting:22.0,n_sppg:8,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Ogan Komering Ilir",ikp:80.4,kat_ikp:6,sppg_per100k:10.54,pct_miskin:11.84,pct_stunting:24.3,n_sppg:87,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Sumbawa Barat",ikp:80.4,kat_ikp:6,sppg_per100k:9.33,pct_miskin:10.98,pct_stunting:18.2,n_sppg:15,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Kota Palembang",ikp:80.6,kat_ikp:6,sppg_per100k:12.18,pct_miskin:9.04,pct_stunting:10.6,n_sppg:212,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Jombang",ikp:80.9,kat_ikp:6,sppg_per100k:11.48,pct_miskin:8.36,pct_stunting:17.2,n_sppg:159,is_papua:false},
+    {provinsi:"Aceh",kabkota:"Aceh Jaya",ikp:81.1,kat_ikp:6,sppg_per100k:10.76,pct_miskin:10.37,pct_stunting:31.0,n_sppg:11,is_papua:false},
+    {provinsi:"Kalimantan Tengah",kabkota:"Kotawaringin Timur",ikp:81.3,kat_ikp:6,sppg_per100k:1.53,pct_miskin:5.83,pct_stunting:21.6,n_sppg:7,is_papua:false},
+    {provinsi:"Banten",kabkota:"Kota Tangerang",ikp:81.4,kat_ikp:6,sppg_per100k:4.5,pct_miskin:5.19,pct_stunting:11.2,n_sppg:89,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Padang Panjang",ikp:81.5,kat_ikp:6,sppg_per100k:11.46,pct_miskin:4.97,pct_stunting:19.0,n_sppg:7,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Jepara",ikp:81.6,kat_ikp:6,sppg_per100k:14.82,pct_miskin:5.79,pct_stunting:15.6,n_sppg:186,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Ogan Komering Ulu Timur",ikp:81.8,kat_ikp:6,sppg_per100k:8.31,pct_miskin:8.86,pct_stunting:17.4,n_sppg:57,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Bulukumba",ikp:81.9,kat_ikp:6,sppg_per100k:9.93,pct_miskin:6.06,pct_stunting:25.2,n_sppg:46,is_papua:false},
+    {provinsi:"Nusa Tenggara Barat",kabkota:"Kota Bima",ikp:82.0,kat_ikp:6,sppg_per100k:14.87,pct_miskin:7.33,pct_stunting:28.4,n_sppg:25,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Berau",ikp:82.0,kat_ikp:6,sppg_per100k:5.95,pct_miskin:4.44,pct_stunting:23.4,n_sppg:16,is_papua:false},
+    {provinsi:"Sumatera Utara",kabkota:"Karo",ikp:82.1,kat_ikp:6,sppg_per100k:8.91,pct_miskin:6.66,pct_stunting:17.6,n_sppg:39,is_papua:false},
+    {provinsi:"Banten",kabkota:"Serang",ikp:82.1,kat_ikp:6,sppg_per100k:13.17,pct_miskin:4.48,pct_stunting:20.2,n_sppg:229,is_papua:false},
+    {provinsi:"Jawa Timur",kabkota:"Mojokerto",ikp:82.1,kat_ikp:6,sppg_per100k:10.16,pct_miskin:8.79,pct_stunting:15.2,n_sppg:119,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Kota Baru",ikp:82.2,kat_ikp:6,sppg_per100k:1.7,pct_miskin:4.39,pct_stunting:23.2,n_sppg:6,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Penajam Paser Utara",ikp:82.2,kat_ikp:6,sppg_per100k:2.29,pct_miskin:5.78,pct_stunting:32.0,n_sppg:12,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Lampung Selatan",ikp:82.2,kat_ikp:6,sppg_per100k:12.9,pct_miskin:12.05,pct_stunting:10.4,n_sppg:148,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Musi Rawas",ikp:82.3,kat_ikp:6,sppg_per100k:11.92,pct_miskin:12.67,pct_stunting:19.3,n_sppg:50,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Lima Puluh Kota",ikp:82.4,kat_ikp:6,sppg_per100k:4.63,pct_miskin:6.1,pct_stunting:26.6,n_sppg:19,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Padang",ikp:82.6,kat_ikp:6,sppg_per100k:7.38,pct_miskin:3.63,pct_stunting:20.6,n_sppg:72,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Tapin",ikp:82.6,kat_ikp:6,sppg_per100k:7.86,pct_miskin:2.91,pct_stunting:13.2,n_sppg:16,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Muara Enim",ikp:82.8,kat_ikp:6,sppg_per100k:7.18,pct_miskin:9.45,pct_stunting:20.4,n_sppg:47,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Tanah Bumbu",ikp:83.2,kat_ikp:6,sppg_per100k:7.67,pct_miskin:3.13,pct_stunting:21.6,n_sppg:27,is_papua:false},
+    {provinsi:"Jambi",kabkota:"Kota Sungai Penuh",ikp:83.2,kat_ikp:6,sppg_per100k:10.68,pct_miskin:3.23,pct_stunting:8.0,n_sppg:11,is_papua:false},
+    {provinsi:"Bali",kabkota:"Gianyar",ikp:83.3,kat_ikp:6,sppg_per100k:5.63,pct_miskin:3.71,pct_stunting:5.4,n_sppg:30,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Paser",ikp:83.5,kat_ikp:6,sppg_per100k:1.37,pct_miskin:8.13,pct_stunting:23.4,n_sppg:4,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Kota Pagar Alam",ikp:83.6,kat_ikp:6,sppg_per100k:9.22,pct_miskin:7.7,pct_stunting:20.0,n_sppg:14,is_papua:false},
+    {provinsi:"Lampung",kabkota:"Kota Metro",ikp:83.7,kat_ikp:6,sppg_per100k:18.96,pct_miskin:6.44,pct_stunting:14.8,n_sppg:34,is_papua:false},
+    {provinsi:"Jawa Tengah",kabkota:"Batang",ikp:83.7,kat_ikp:6,sppg_per100k:10.75,pct_miskin:7.79,pct_stunting:20.7,n_sppg:92,is_papua:false},
+    {provinsi:"Bali",kabkota:"Kota Denpasar",ikp:83.8,kat_ikp:6,sppg_per100k:6.11,pct_miskin:2.16,pct_stunting:10.4,n_sppg:47,is_papua:false},
+    {provinsi:"Kepulauan Bangka Belitung",kabkota:"Bangka",ikp:83.9,kat_ikp:6,sppg_per100k:5.14,pct_miskin:4.71,pct_stunting:21.2,n_sppg:18,is_papua:false},
+    {provinsi:"Sumatera Selatan",kabkota:"Banyu Asin",ikp:84.0,kat_ikp:6,sppg_per100k:8.69,pct_miskin:8.48,pct_stunting:16.8,n_sppg:79,is_papua:false},
+    {provinsi:"Jawa Barat",kabkota:"Kota Banjar",ikp:84.0,kat_ikp:6,sppg_per100k:18.68,pct_miskin:5.73,pct_stunting:18.8,n_sppg:40,is_papua:false},
+    {provinsi:"Sulawesi Selatan",kabkota:"Bantaeng",ikp:84.2,kat_ikp:6,sppg_per100k:12.39,pct_miskin:7.68,pct_stunting:24.3,n_sppg:26,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Barito Kuala",ikp:84.4,kat_ikp:6,sppg_per100k:3.53,pct_miskin:4.31,pct_stunting:16.5,n_sppg:12,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Hulu Sungai Selatan",ikp:84.6,kat_ikp:6,sppg_per100k:8.6,pct_miskin:3.12,pct_stunting:19.8,n_sppg:21,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Banjar",ikp:84.7,kat_ikp:6,sppg_per100k:5.17,pct_miskin:2.74,pct_stunting:32.3,n_sppg:32,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Tabalong",ikp:85.2,kat_ikp:6,sppg_per100k:7.31,pct_miskin:4.67,pct_stunting:23.1,n_sppg:20,is_papua:false},
+    {provinsi:"DI Yogyakarta",kabkota:"Sleman",ikp:85.5,kat_ikp:6,sppg_per100k:11.6,pct_miskin:6.71,pct_stunting:17.3,n_sppg:138,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Hulu Sungai Tengah",ikp:85.7,kat_ikp:6,sppg_per100k:5.85,pct_miskin:5.03,pct_stunting:19.6,n_sppg:16,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Solok",ikp:85.9,kat_ikp:6,sppg_per100k:15.73,pct_miskin:2.91,pct_stunting:18.6,n_sppg:13,is_papua:false},
+    {provinsi:"Kalimantan Selatan",kabkota:"Balangan",ikp:86.4,kat_ikp:6,sppg_per100k:7.04,pct_miskin:4.64,pct_stunting:16.0,n_sppg:10,is_papua:false},
+    {provinsi:"Kalimantan Timur",kabkota:"Kutai Kartanegara",ikp:86.5,kat_ikp:6,sppg_per100k:4.9,pct_miskin:6.72,pct_stunting:14.3,n_sppg:44,is_papua:false},
+    {provinsi:"Sumatera Barat",kabkota:"Kota Payakumbuh",ikp:86.7,kat_ikp:6,sppg_per100k:15.95,pct_miskin:4.95,pct_stunting:16.4,n_sppg:24,is_papua:false},
+    {provinsi:"Bali",kabkota:"Badung",ikp:88.8,kat_ikp:6,sppg_per100k:5.01,pct_miskin:1.9,pct_stunting:7.2,n_sppg:29,is_papua:false}
   ];
-
-  filteredData = [...allData];
+  filteredData=[...allData];
   renderTable(filteredData);
   updateFilterCount(filteredData.length);
   buildScatterChart();
 }
-
-function applyFilters() {
-  const ikpVal   = document.getElementById('filter-ikp').value;
-  const papuaVal = document.getElementById('filter-papua').value;
-
-  filteredData = allData.filter(d => {
-    const matchIKP   = ikpVal === 'all'      || d.kat_ikp == parseInt(ikpVal);
-    const matchPapua = papuaVal === 'all'    ||
-                       (papuaVal === 'papua'   &&  d.is_papua) ||
-                       (papuaVal === 'nopapua' && !d.is_papua);
-    return matchIKP && matchPapua;
+function applyFilters(){
+  const ikpVal=document.getElementById('filter-ikp').value;
+  const papuaVal=document.getElementById('filter-papua').value;
+  filteredData=allData.filter(d=>{
+    const mI=ikpVal==='all'||d.kat_ikp==parseInt(ikpVal);
+    const mP=papuaVal==='all'||(papuaVal==='papua'&&d.is_papua)||(papuaVal==='nopapua'&&!d.is_papua);
+    return mI&&mP;
   });
-
   renderTable(filteredData);
   updateFilterCount(filteredData.length);
 }
-
-function resetFilters() {
-  document.getElementById('filter-ikp').value   = 'all';
-  document.getElementById('filter-papua').value = 'all';
-  filteredData = [...allData];
+function resetFilters(){
+  document.getElementById('filter-ikp').value='all';
+  document.getElementById('filter-papua').value='all';
+  filteredData=[...allData];
   renderTable(filteredData);
   updateFilterCount(filteredData.length);
 }
-
-function updateFilterCount(n) {
-  document.getElementById('filter-count').textContent =
-    `Menampilkan ${n} dari ${allData.length} kabupaten/kota (data sampel representatif)`;
+function updateFilterCount(n){
+  const total=filteredData.reduce((s,d)=>s+d.n_sppg,0);
+  document.getElementById('filter-count').textContent=`Menampilkan ${n} kab/kota · Total SPPG: ${total.toLocaleString('id-ID')}`;
 }
-
-function renderTable(data) {
-  const tbody = document.getElementById('table-body');
-  if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="loading">Tidak ada data yang sesuai filter.</td></tr>';
-    return;
-  }
-
-  const sorted = [...data].sort((a,b) => a.ikp - b.ikp);
-
-  tbody.innerHTML = sorted.map(d => {
-    const tagClass = `tag-${d.kat_ikp}`;
-    const sppgStr  = d.sppg_per100k.toFixed(2);
-    const zeroTag  = d.n_sppg === 0
-      ? '<span class="tag tag-0sppg">0 SPPG</span>'
-      : '';
-    return `
-      <tr>
-        <td>${d.provinsi}</td>
-        <td>${d.kabkota}</td>
-        <td>${d.ikp.toFixed(1)}</td>
-        <td><span class="tag ${tagClass}">${IKP_LABELS[d.kat_ikp]}</span></td>
-        <td>${sppgStr}</td>
-        <td>${d.pct_miskin.toFixed(1)}%</td>
-        <td>${d.pct_stunting.toFixed(1)}%</td>
-        <td>${d.n_sppg}</td>
-        <td>${zeroTag}</td>
-      </tr>`;
+function renderTable(data){
+  const tbody=document.getElementById('table-body');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9" class="loading">Tidak ada data.</td></tr>';return;}
+  const sorted=[...data].sort((a,b)=>a.ikp-b.ikp);
+  tbody.innerHTML=sorted.map(d=>{
+    const tagC=`tag-${d.kat_ikp}`;
+    const zeroTag=d.n_sppg===0?'<span class="tag tag-0sppg">0 SPPG</span>':'';    return`<tr><td>${d.provinsi}</td><td>${d.kabkota}</td><td>${d.ikp.toFixed(1)}</td><td><span class="tag ${tagC}">${IKP_LABELS[d.kat_ikp]}</span></td><td>${d.sppg_per100k.toFixed(2)}</td><td>${d.pct_miskin.toFixed(1)}%</td><td>${d.pct_stunting.toFixed(1)}%</td><td>${d.n_sppg}</td><td>${zeroTag}</td></tr>`;
   }).join('');
 }
-
-// ── CHARTS ───────────────────────────────────────────────────────────────
-
-// Chart 1: Bar chart
-new Chart(document.getElementById('chart-bar-ikp'), {
-  type: 'bar',
-  data: {
-    labels: summaryIKP.map(d => d.kat_ikp_f),
-    datasets: [{
-      label: 'Rata-rata SPPG per 100k',
-      data: summaryIKP.map(d => d.mean_sppg),
-      backgroundColor: summaryIKP.map(d => IKP_COLORS[d.kat_ikp] + 'CC'),
-      borderColor:     summaryIKP.map(d => IKP_COLORS[d.kat_ikp]),
-      borderWidth: 1.5,
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          afterBody: (items) => {
-            const d = summaryIKP[items[0].dataIndex];
-            return [`n = ${d.n} kab/kota`, `Miskin: ${d.mean_miskin}%`, `Stunting: ${d.mean_stunting}%`];
-          }
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'SPPG per 100.000 penduduk', font: { size: 11 } }
-      },
-      x: { ticks: { font: { size: 10 } } }
-    }
-  }
-});
-
-// Chart 2: Scatter IKP vs SPPG — dibuat setelah allData terisi oleh loadDemoData()
-let scatterChart = null;
-function buildScatterChart() {
-  const pts = allData.map(d => ({
-    x: d.ikp,
-    y: d.sppg_per100k,
-    label: d.kabkota,
-    kat: d.kat_ikp
-  }));
-
-  if (scatterChart) scatterChart.destroy();
-
-  scatterChart = new Chart(document.getElementById('chart-scatter'), {
-    type: 'scatter',
-    data: {
-      datasets: [1, 2, 3, 4, 5, 6].map(k => ({
-        label: IKP_LABELS[k],
-        data: pts
-          .filter(p => p.kat === k)
-          .map(p => ({ x: p.x, y: p.y, label: p.label })),
-        backgroundColor: IKP_COLORS[k] + 'BB',
-        borderColor: IKP_COLORS[k],
-        pointRadius: 6,
-        pointHoverRadius: 8,
-      }))
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } },
-        tooltip: {
-          callbacks: {
-            label: (ctx) =>
-              ctx.raw.label + ': IKP=' + ctx.raw.x.toFixed(1) + ', SPPG/100k=' + ctx.raw.y.toFixed(2)
-          }
-        }
-      },
-      scales: {
-        x: {
-          type: 'linear',
-          min: 15,
-          max: 95,
-          ticks: { stepSize: 10 },
-          title: { display: true, text: 'IKP (semakin tinggi = semakin tahan pangan)', font: { size: 11 } }
-        },
-        y: {
-          type: 'linear',
-          min: 0,
-          max: 50,
-          ticks: { stepSize: 5 },
-          title: { display: true, text: 'SPPG per 100.000 penduduk', font: { size: 11 } }
-        }
-      }
-    }
-  });
+function dlCSV(){
+  const rows=filteredData.length?filteredData:allData;
+  const hdr='Provinsi,Kabupaten/Kota,IKP,Kategori IKP,SPPG per 100k,Miskin %,Stunting %,Jumlah SPPG\n';
+  const body=rows.map(d=>`"${d.provinsi}","${d.kabkota}",${d.ikp},${IKP_LABELS[d.kat_ikp]},${d.sppg_per100k},${d.pct_miskin},${d.pct_stunting},${d.n_sppg}`).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+hdr+body],{type:'text/csv;charset=utf-8'}));
+  a.download='DapurUntukSiapa_514KabKota_Verified.csv';a.click();
 }
-
-// Chart 3: CI bar
-new Chart(document.getElementById('chart-ci'), {
-  type: 'bar',
-  data: {
-    labels: ['CI Kemiskinan (Full)', 'CI Kemiskinan (−Papua)', 'CI IKP (Full)', 'CI IKP (−Papua)'],
-    datasets: [{
-      data: [-0.042, 0.004, 0.077, 0.034],
-      backgroundColor: [-0.042, 0.004, 0.077, 0.034].map(v =>
-        v < 0 ? '#27ae6099' : '#e74c3c99'
-      ),
-      borderColor: [-0.042, 0.004, 0.077, 0.034].map(v =>
-        v < 0 ? '#27ae60' : '#e74c3c'
-      ),
-      borderWidth: 1.5
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => `CI = ${ctx.raw > 0 ? '+' : ''}${ctx.raw.toFixed(3)} (${ctx.raw < 0 ? 'pro-rawan ✓' : 'pro-tahan ✗'})`
-        }
-      }
-    },
-    scales: {
-      y: {
-        title: { display: true, text: 'Concentration Index', font: { size: 10 } },
-        suggestedMin: -0.1, suggestedMax: 0.12,
-        grid: { color: (ctx) => ctx.tick.value === 0 ? '#333' : '#eee', lineWidth: (ctx) => ctx.tick.value === 0 ? 1.5 : 1 }
-      },
-      x: { ticks: { font: { size: 9 } } }
-    }
-  }
-});
-
-// Chart 4 & 5: Quantile regression
-function makeQRChart(canvasId, term) {
-  const d = qrData[term];
-  return new Chart(document.getElementById(canvasId), {
-    type: 'line',
-    data: {
-      labels: qrData.taus,
-      datasets: [
-        {
-          label: 'Full Sample',
-          data: d.full.est,
-          borderColor: '#e74c3c',
-          backgroundColor: '#e74c3c22',
-          tension: 0.3,
-          pointRadius: 5,
-          fill: false
-        },
-        {
-          label: 'Tanpa Papua',
-          data: d.nopapua.est,
-          borderColor: '#2980b9',
-          backgroundColor: '#2980b922',
-          tension: 0.3,
-          pointRadius: 5,
-          borderDash: [5, 3],
-          fill: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 12 } }
-      },
-      scales: {
-        y: {
-          title: { display: true, text: 'Koefisien', font: { size: 10 } },
-          grid: {
-            color: (ctx) => ctx.tick.value === 0 ? '#555' : '#eee',
-            lineWidth: (ctx) => ctx.tick.value === 0 ? 1.5 : 1
-          }
-        }
-      }
-    }
-  });
+new Chart(document.getElementById('chart-bar-ikp'),{type:'bar',data:{labels:summaryIKP.map(d=>d.kat_ikp_f),datasets:[{label:'Rata-rata SPPG per 100k',data:summaryIKP.map(d=>d.mean_sppg),backgroundColor:summaryIKP.map(d=>IKP_COLORS[d.kat_ikp]+'CC'),borderColor:summaryIKP.map(d=>IKP_COLORS[d.kat_ikp]),borderWidth:1.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{afterBody:(items)=>{const d=summaryIKP[items[0].dataIndex];return[`n = ${d.n} kab/kota`,`Miskin: ${d.mean_miskin}%`,`Stunting: ${d.mean_stunting}%`];}}}},scales:{y:{beginAtZero:true,title:{display:true,text:'SPPG per 100.000 penduduk',font:{size:11}}},x:{ticks:{font:{size:10}}}}}});
+let scatterChart=null;
+function buildScatterChart(){
+  const pts=allData.map(d=>({x:d.ikp,y:d.sppg_per100k,label:d.kabkota,kat:d.kat_ikp}));
+  if(scatterChart)scatterChart.destroy();
+  scatterChart=new Chart(document.getElementById('chart-scatter'),{type:'scatter',data:{datasets:[1,2,3,4,5,6].map(k=>({label:IKP_LABELS[k],data:pts.filter(p=>p.kat===k).map(p=>({x:p.x,y:p.y,label:p.label})),backgroundColor:IKP_COLORS[k]+'BB',borderColor:IKP_COLORS[k],pointRadius:4,pointHoverRadius:6}))},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:12}},tooltip:{callbacks:{label:(ctx)=>ctx.raw.label+': IKP='+ctx.raw.x.toFixed(1)+', SPPG/100k='+ctx.raw.y.toFixed(2)}}},scales:{x:{type:'linear',min:15,max:95,ticks:{stepSize:10},title:{display:true,text:'IKP (semakin tinggi = semakin tahan pangan)',font:{size:11}}},y:{type:'linear',min:0,max:50,ticks:{stepSize:5},title:{display:true,text:'SPPG per 100.000 penduduk',font:{size:11}}}}}});
 }
-
-makeQRChart('chart-qr-ikp', 'ikp');
-makeQRChart('chart-qr-stunting', 'stunting');
-
-// ── INIT ─────────────────────────────────────────────────────────────────
-loadDemoData();
+new Chart(document.getElementById('chart-ci'),{type:'bar',data:{labels:['CI Kemiskinan (Full)','CI Kemiskinan (−Papua)','CI IKP (Full)','CI IKP (−Papua)'],datasets:[{data:[-0.042,0.004,0.077,0.034],backgroundColor:[-0.042,0.004,0.077,0.034].map(v=>v<0?'#27ae6099':'#e74c3c99'),borderColor:[-0.042,0.004,0.077,0.034].map(v=>v<0?'#27ae60':'#e74c3c'),borderWidth:1.5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Concentration Index',font:{size:10}},suggestedMin:-0.1,suggestedMax:0.12},x:{ticks:{font:{size:9}}}}}});
+function makeQRChart(canvasId,term){
+  const d=qrData[term];
+  return new Chart(document.getElementById(canvasId),{type:'line',data:{labels:qrData.taus,datasets:[{label:'Full Sample',data:d.full.est,borderColor:'#e74c3c',backgroundColor:'#e74c3c22',tension:0.3,pointRadius:5,fill:false},{label:'Tanpa Papua',data:d.nopapua.est,borderColor:'#2980b9',backgroundColor:'#2980b922',tension:0.3,pointRadius:5,borderDash:[5,3],fill:false}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:12}}},scales:{y:{title:{display:true,text:'Koefisien',font:{size:10}},grid:{color:(ctx)=>ctx.tick.value===0?'#555':'#eee',lineWidth:(ctx)=>ctx.tick.value===0?1.5:1}}}}});
+}
+makeQRChart('chart-qr-ikp','ikp');
+makeQRChart('chart-qr-stunting','stunting');
+loadData();
 </script>
 </body>
 </html>
