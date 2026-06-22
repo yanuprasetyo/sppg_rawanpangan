@@ -290,11 +290,4 @@ Kode: [MIT License](LICENSE)
 Data & konten: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — bebas digunakan untuk keperluan non-komersial dengan atribusi.
 
 ---
-
-## Kontak
-
-**Yanu Endar Prasetyo, Ph.D.**
-Peneliti Ahli Madya, Pusat Riset Kependudukan, BRIN
-INFID Research Fellow · Founder, Indonesian Basic Income Guarantee Network (indobig.net)
-
 Pertanyaan tentang data atau metodologi: buka [GitHub Issue](https://github.com/yanuprasetyo/sppg_rawanpangan/issues) atau hubungi melalui profil GitHub.
